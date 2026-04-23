@@ -1,11 +1,12 @@
 import core.Network;
+import core.TrustSystem;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main{
     public static void main(String[] args){
-            Network network = new Network();
+            Network network = new Network(new TrustSystem(100.00));
             network.createHost("A1");
             network.createHost("A2");
             network.createHost("A3");

@@ -5,11 +5,18 @@ import java.util.*;
 public class Network {
     // Keep track of hosts
     private HashMap<String, Host> hosts = new HashMap<>();
+    private TrustSystem trustSystem;
+
     Map<Host, Map<Host, Integer>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per host
 
-    public Host createHost(String str) {
-            hosts.put(str, new Host(str));
-        return hosts.get(str);
+    public Network(TrustSystem trustSystem) {
+        this.trustSystem = trustSystem;
+    }
+
+    public Host createHost(String id) {
+        hosts.put(id, new Host(id));
+        trustSystem.addHost(id);
+        return hosts.get(id);
     }
 
     public void insertEdge(String fromH, String toH, int costE){
@@ -41,15 +48,15 @@ public class Network {
         }
     }
 
-//    // Depth first graph traversal
-//    public void visitDepthFirst(Host v, Set<Host> visited) {
+//    // Depth first graph traversal (recursive)
+//    public void visitDepthFirst(Host h, Set<Host> visited) {
 //        // End if the host is already visited
-//        if (visited.contains(v)) {
+//        if (visited.contains(h)) {
 //            return;
 //        }
-//        visited.add(v);
+//        visited.add(h);
 //        // Repeat the method for each host that is connected to the current host
-//        for (Edge e : getEdges(v))
+//        for (Edge e : getEdges(h))
 //            visitDepthFirst(e.to, visited);
 //    }
 

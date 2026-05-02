@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class Host {
     String id;
+    int vulnerability;
 
 
     public Host(String id) {
@@ -12,6 +13,10 @@ public class Host {
 
     public String toString() {
         return id;
+    }
+
+    public void setVulnerability(int vulnerability) {
+        this.vulnerability = vulnerability;
     }
 
     //Override equals to make sure vertices with the same value are considered as equal

@@ -3,31 +3,23 @@ package core;
 import java.util.*;
 
 public class Network {
-    // Keep track of hosts
-    private HashMap<String, Host> hosts = new HashMap<>();
     private TrustSystem trustSystem;
-
-    Map<Host, Map<Host, Integer>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per host
+    private HashMap<String, Host> hosts = new HashMap<>();
+    
+    Map<String, List<Edge>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per host
 
     public Network(TrustSystem trustSystem) {
         this.trustSystem = trustSystem;
     }
 
-    public Host createHost(String id) {
+    public void createHost(String id) {
         hosts.put(id, new Host(id));
+        outEdges.put(id, new ArrayList<>());
         trustSystem.addHost(id);
-        return hosts.get(id);
     }
 
-    public void insertEdge(String fromH, String toH, int costE){
-        Host fHost = hosts.get(fromH);
-        Host tHost = hosts.get(toH);
-
-        // Add host as source if it doesn't exist already
-        if(!outEdges.containsKey(fHost))
-            outEdges.put(fHost, new HashMap<Host, Integer>());
-
-        outEdges.get(fHost).put(tHost,costE);
+    public void insertEdge(String fromId, String toId, int capacity, double time){
+        outEdges.get(fromId).add(new Edge (toId, capacity, time));
     }
 
     public Host getOrCreate(String str) {
@@ -38,13 +30,12 @@ public class Network {
         return hosts.get(str);
     }
 
-
     public void printGraph(){
-        for (Map.Entry<Host, Map<Host, Integer>> edge: outEdges.entrySet()){
-            for (Map.Entry<Host, Integer> out: edge.getValue().entrySet()){
-                System.out.println(edge.getKey() + " -> " + out.getKey() + ": " + out.getValue());
+        for (String hostId : hosts.keySet()) {
+            System.out.println(hostId);
+            for (Edge edge: outEdges.get(hostId)){
+                System.out.println("-> " + edge.toId + ": C=" + edge.capacity + " T=" + edge.time);
             }
-
         }
     }
 
@@ -72,13 +63,13 @@ public class Network {
         return hosts.values();
     }
 
-    public Map<Host, Integer> getEdges(Host h){
-        return outEdges.get(h);
-    };
-
-    public int getCost(Host fromH, Host toH){
-        return outEdges.get(fromH).get(toH);
+    public List<Edge> getEdges(String hostId){
+        return outEdges.get(hostId);
     }
+
+//    public int getCapacity(String fromId, String toId){
+//        return outEdges.get(fromId).get(toId);
+//    }
 
 
 }

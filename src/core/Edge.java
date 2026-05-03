@@ -2,13 +2,15 @@ package core;
 
 // Host to or String toId?
 public class Edge {
+    String fromId;
     String toId;
     final int capacity;
 
     double time;
     int residual;
 
-    public Edge (String toId, int capacity, double time) {
+    public Edge (String fromId, String toId, int capacity, double time) {
+        this.fromId = fromId;
         this.toId = toId;
         this.capacity = capacity;
         this.residual = capacity;
@@ -16,6 +18,6 @@ public class Edge {
     }
 
     public String toString() {
-        return toId + "| capacity: " + capacity + "| time: " + time;
+        return fromId + " -> " + toId + ": capacity=" + capacity + ", time=" + time;
     }
 }

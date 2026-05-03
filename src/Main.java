@@ -1,9 +1,39 @@
 import core.Network;
 import core.TrustSystem;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Main{
     public static void main(String[] args){
             Network network = new Network(new TrustSystem(100.00));
+//            network.createHost("S1");
+//            network.createHost("S2");
+//            network.createHost("S3");
+//            network.createHost("A");
+//            network.createHost("B");
+//            network.createHost("D");
+//
+//            // From Wei et al. with own given capacity
+//            network.insertEdge("S1", "A", 100, 0.4);
+//            network.insertEdge("S2", "A", 50, 0.4);
+//            network.insertEdge("S2", "B", 50, 0.4);
+//            network.insertEdge("S3", "A", 100, 0.6);
+//            network.insertEdge("S3", "B", 100, 0.5);
+//            network.insertEdge("A", "D", 100, 0.4);
+//            network.insertEdge("B", "D", 150, 0.9);
+//
+//            network.printGraph();
+//
+//            System.out.println("\n\n");
+
+
+//            Set<String> visited = new HashSet<>();
+//            network.visitDepthFirst("S1", visited);
+//            for (String host : visited){
+//                    System.out.println(host);
+//            }
+
             network.createHost("A");
             network.createHost("B");
             network.createHost("C");
@@ -29,6 +59,7 @@ public class Main{
             network.insertEdge("E", "H", 40, 0.9);
             network.insertEdge("E", "F", 60, 0.6);
 
+            network.insertEdge("F", "E", 20, 0.1);
             network.insertEdge("F", "H", 70, 1.2);
             network.insertEdge("F", "G", 50, 0.5);
 
@@ -37,9 +68,18 @@ public class Main{
             network.insertEdge("H", "I", 60, 1.1);
             network.insertEdge("H", "J", 90, 1.3);
 
+            network.insertEdge("I", "H", 40, 0.6);
             network.insertEdge("I", "J", 70, 0.7);
 
-
             network.printGraph();
+
+//            System.out.println(network.isPath("D", "E"));
+
+//            Set<String> visited = new HashSet<>();
+//            network.visitDepthFirst("A", visited);
+//            for (String host : visited){
+//                    System.out.println(host);
+//            }
+
     }
 }

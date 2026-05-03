@@ -6,7 +6,7 @@ public class Network {
     private TrustSystem trustSystem;
     private HashMap<String, Host> hosts = new HashMap<>();
     
-    Map<String, List<Edge>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per host
+    Map<String, Set<Edge>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per host
 
     public Network(TrustSystem trustSystem) {
         this.trustSystem = trustSystem;
@@ -14,44 +14,79 @@ public class Network {
 
     public void createHost(String id) {
         hosts.put(id, new Host(id));
-        outEdges.put(id, new ArrayList<>());
+        outEdges.put(id, new HashSet<>());
         trustSystem.addHost(id);
     }
 
     public void insertEdge(String fromId, String toId, int capacity, double time){
-        outEdges.get(fromId).add(new Edge (toId, capacity, time));
+        outEdges.get(fromId).add(new Edge (fromId, toId, capacity, time));
     }
 
-    public Host getOrCreate(String str) {
-        // Create new host if it does not exist already
-        if (!hosts.containsKey(str)) {
-            hosts.put(str, new Host(str));
+
+    public List<Edge> minCostPath(String fromId, String toId, Set<String> visited) {
+            // End if the host is already visited
+            if (visited.contains(hostId)) {
+                return;
+            }
+            visited.add(hostId);
+            // Repeat the method for each host that is connected to the current host
+            for (Edge e: getEdges(hostId)) {
+                minCostPath(e.toId, visited);
         }
-        return hosts.get(str);
+
+    }
+
+
+
+    // BFS: Check if target can be reached from given node
+    public boolean isPath(String sourceId, String targetId, Set<String> excluded){
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>(excluded);
+        queue.add(sourceId);
+
+        while (!queue.isEmpty()){
+            String current = queue.poll();
+            visited.add(current);
+            for (Edge e: getEdges(current)){
+                if (e.toId.equals(targetId)){
+                    return true;
+                }
+                if (!visited.contains(e.toId)){
+                    queue.add(e.toId);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // BFS: Check if target can be reached from given node
+    // Overload to allow search without excluded hosts
+    public boolean isPath(String sourceId, String targetId){
+        return isPath(sourceId, targetId, new HashSet<>(){});
+    }
+
+    // DFS traversal to check connectivity (recursive)
+    public void visitDepthFirst(String hostId, Set<String> visited) {
+        // End if the host is already visited
+        if (visited.contains(hostId)) {
+            return;
+        }
+        visited.add(hostId);
+        // Repeat the method for each host that is connected to the current host
+        for (Edge e: getEdges(hostId))
+            visitDepthFirst(e.toId, visited);
     }
 
     public void printGraph(){
         for (String hostId : hosts.keySet()) {
-            System.out.println(hostId);
+            System.out.println(hostId + ":");
             for (Edge edge: outEdges.get(hostId)){
-                System.out.println("-> " + edge.toId + ": C=" + edge.capacity + " T=" + edge.time);
+                System.out.println(edge.toString());
+//                System.out.println("-> " + edge.toId + ": C=" + edge.capacity + " T=" + edge.time);
             }
         }
     }
-
-//    // Depth first graph traversal (recursive)
-//    public void visitDepthFirst(Host h, Set<Host> visited) {
-//        // End if the host is already visited
-//        if (visited.contains(h)) {
-//            return;
-//        }
-//        visited.add(h);
-//        // Repeat the method for each host that is connected to the current host
-//        for (Edge e : getEdges(h))
-//            visitDepthFirst(e.to, visited);
-//    }
-
-
 
     // Getters
     public Host getHost(String str){
@@ -63,13 +98,8 @@ public class Network {
         return hosts.values();
     }
 
-    public List<Edge> getEdges(String hostId){
+    public Set<Edge> getEdges(String hostId){
         return outEdges.get(hostId);
     }
-
-//    public int getCapacity(String fromId, String toId){
-//        return outEdges.get(fromId).get(toId);
-//    }
-
 
 }

@@ -23,17 +23,62 @@ public class Network {
     }
 
 
-    public List<Edge> minCostPath(String fromId, String toId, Set<String> visited) {
-            // End if the host is already visited
-            if (visited.contains(hostId)) {
-                return;
-            }
-            visited.add(hostId);
-            // Repeat the method for each host that is connected to the current host
-            for (Edge e: getEdges(hostId)) {
-                minCostPath(e.toId, visited);
+    public List<String> minCostPath(String sourceId, String targetId) {
+        if (!isPath(sourceId, targetId)) {
+            return null;
         }
 
+        Map<String, String> minCosts = minCosts(sourceId, targetId);
+
+        List<String> minPath = new ArrayList<>();
+
+        // Get path from given list by tracing backwards from target
+        for (String hostId = targetId; hostId != null; hostId = minCosts.get(hostId)){
+            minPath.add(hostId);
+        }
+
+        Collections.reverse(minPath);
+        return minPath;
+    }
+
+
+    public Map<String, String> minCosts(String sourceId, String targetId) {
+        if (!isPath(sourceId, targetId)) {
+            return null;
+        }
+
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+
+        Map<String, Double> costTo = new HashMap<>(); // Cost from source host to given host
+        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from sourceId
+
+        // Q: Initialize all or containskey() in while-loop?
+        for (String hostId : hosts.keySet()) {
+            costTo.put(hostId, Double.MAX_VALUE);
+        }
+        costTo.put(sourceId, 0.0);
+        queue.add(sourceId);
+        double cost;
+
+        while (!queue.isEmpty()) {
+            String currentHost = queue.poll();
+            visited.add(currentHost);
+
+            // Update total costTo if lower cost is found
+            // Save parent to keep track of path
+            for (Edge e : getEdges(currentHost)) {
+                cost = e.time + costTo.get(currentHost);
+                if (cost < costTo.get(e.toId)) {
+                    costTo.put(e.toId, cost);
+                    parents.put(e.toId, currentHost);
+                }
+                if (!visited.contains(e.toId)) {
+                    queue.add(e.toId);
+                }
+            }
+        }
+        return parents;
     }
 
 

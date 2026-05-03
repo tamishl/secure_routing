@@ -2,8 +2,9 @@ import core.Network;
 import core.TrustSystem;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NetworkTest {
 
@@ -91,5 +92,54 @@ public class NetworkTest {
         network.insertEdge("I", "J", 70, 0.7);
 
         assertFalse(network.isPath("D", "E"));
+    }
+
+
+    @Test
+    public void minCostCorrectMap() {
+        Network network = new Network(new TrustSystem(100));
+        network.createHost("S1");
+        network.createHost("A");
+        network.createHost("B");
+        network.createHost("C");
+        network.createHost("D");
+
+        network.insertEdge("S1", "A", 100, 0.4);
+        network.insertEdge("S1", "B", 50, 0.2);
+        network.insertEdge("A", "C", 70, 0.3);
+        network.insertEdge("B", "C", 60, 0.1);
+        network.insertEdge("C", "D", 80, 0.5);
+        network.insertEdge("A", "D", 200, 0.9);
+
+        Map<String, String> expected = new HashMap<>();
+        expected.put("A", "S1");
+        expected.put("B", "S1");
+        expected.put("C", "B");
+        expected.put("D", "C");
+
+        assertEquals(expected, network.minCosts("S1", "D"));
+    }
+
+    @Test
+    public void minCostPathCorrectPath() {
+        Network network = new Network(new TrustSystem(100));
+        network.createHost("S1");
+        network.createHost("A");
+        network.createHost("B");
+        network.createHost("C");
+        network.createHost("D");
+
+        network.insertEdge("S1", "A", 100, 0.4);
+        network.insertEdge("S1", "B", 50, 0.2);
+        network.insertEdge("A", "C", 70, 0.3);
+        network.insertEdge("B", "C", 60, 0.1);
+        network.insertEdge("C", "D", 80, 0.5);
+        network.insertEdge("A", "D", 200, 0.9);
+
+        List<String> expected = new ArrayList<>();
+        Collections.addAll(expected, "S1", "B", "C", "D");
+
+        assertEquals(expected, network.minCostPath("S1","D"));
+
     }
 }

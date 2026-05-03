@@ -117,7 +117,7 @@ public class NetworkTest {
         expected.put("C", "B");
         expected.put("D", "C");
 
-        assertEquals(expected, network.minCosts("S1", "D"));
+        assertEquals(expected, network.minCosts("S1"));
     }
 
     @Test

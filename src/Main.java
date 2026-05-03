@@ -24,15 +24,6 @@ public class Main{
 //            network.insertEdge("B", "D", 150, 0.9);
 //
 //            network.printGraph();
-//
-//            System.out.println("\n\n");
-
-
-//            Set<String> visited = new HashSet<>();
-//            network.visitDepthFirst("S1", visited);
-//            for (String host : visited){
-//                    System.out.println(host);
-//            }
 
             network.createHost("A");
             network.createHost("B");
@@ -72,14 +63,6 @@ public class Main{
             network.insertEdge("I", "J", 70, 0.7);
 
             network.printGraph();
-
-//            System.out.println(network.isPath("D", "E"));
-
-//            Set<String> visited = new HashSet<>();
-//            network.visitDepthFirst("A", visited);
-//            for (String host : visited){
-//                    System.out.println(host);
-//            }
 
     }
 }

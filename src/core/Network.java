@@ -28,7 +28,7 @@ public class Network {
             return null;
         }
 
-        Map<String, String> minCosts = minCosts(sourceId, targetId);
+        Map<String, String> minCosts = minCosts(sourceId);
 
         List<String> minPath = new ArrayList<>();
 
@@ -41,12 +41,8 @@ public class Network {
         return minPath;
     }
 
-
-    public Map<String, String> minCosts(String sourceId, String targetId) {
-        if (!isPath(sourceId, targetId)) {
-            return null;
-        }
-
+    // DSP to get the parent list of hosts with the shortest cost from the source
+    public Map<String, String> minCosts(String sourceId) {
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
 

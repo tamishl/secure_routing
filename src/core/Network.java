@@ -22,28 +22,34 @@ public class Network {
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, time));
     }
 
-//    public Integer minFlow(String sourceId, String targetId){
-//        String current = targetId;
-//        Integer maxFlow = Integer.MAX_VALUE;
-//        while (!current.equals(sourceId)){
-//            for (String v: minCostPath(sourceId, targetId)){
-//                maxFlow = Math.min(maxFlow, )
-//            }
-//        }
-//    }
+    public Integer maxFlow(String source, String target){
+        List<String> path = minCostPath(source, target);
+        String parent = path.getFirst();
+        String current;
+        Integer maxFlow = Integer.MAX_VALUE;
+
+        // No outer while-loop because last element is target node
+        for (int i = 1; i < path.size(); i++){
+            current = path.get(i);
+            maxFlow = Math.min(maxFlow, outEdges.get(parent).get(current).capacity);
+            parent = current;
+        }
+
+        return maxFlow;
+    }
 
 
-    public List<String> minCostPath(String sourceId, String targetId) {
-        if (!isPath(sourceId, targetId)) {
+    public List<String> minCostPath(String source, String target) {
+        if (!isPath(source, target)) {
             return null;
         }
 
-        Map<String, String> minCosts = minCosts(sourceId);
+        Map<String, String> minCosts = minCosts(source);
 
         List<String> minPath = new ArrayList<>();
 
         // Get path from given list by tracing backwards from target
-        for (String nodeId = targetId; nodeId != null; nodeId = minCosts.get(nodeId)){
+        for (String nodeId = target; nodeId != null; nodeId = minCosts.get(nodeId)){
             minPath.add(nodeId);
         }
 
@@ -52,19 +58,19 @@ public class Network {
     }
 
     // DSP to get the parent list of nodes with the min cost from the source
-    public Map<String, String> minCosts(String sourceId) {
+    public Map<String, String> minCosts(String source) {
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
 
         Map<String, Double> costTo = new HashMap<>(); // Cost from source node to given node
-        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from sourceId
+        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from source
 
         // Q: Initialize all or containsKey() in while-loop?
         for (String nodeId : nodes.keySet()) {
             costTo.put(nodeId, Double.MAX_VALUE);
         }
-        costTo.put(sourceId, 0.0);
-        queue.add(sourceId);
+        costTo.put(source, 0.0);
+        queue.add(source);
         double cost;
         EdgeWeights ew;
         String e;
@@ -78,7 +84,7 @@ public class Network {
             for (Map.Entry<String, EdgeWeights> entry : getEdges(current).entrySet()) {
                 e = entry.getKey();
                 ew = entry.getValue();
-                cost = ew.time + costTo.get(current);
+                cost = ew.capacity + costTo.get(current);
                 if (cost < costTo.get(entry.getKey())) {
                     costTo.put(e, cost);
                     parents.put(e, current);
@@ -94,16 +100,16 @@ public class Network {
 
 
     // BFS: Check if target can be reached from given node
-    public boolean isPath(String sourceId, String targetId, Set<String> excluded){
+    public boolean isPath(String source, String target, Set<String> excluded){
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>(excluded);
-        queue.add(sourceId);
+        queue.add(source);
 
         while (!queue.isEmpty()){
             String current = queue.poll();
             visited.add(current);
             for (String toId: getEdges(current).keySet()){
-                if (toId.equals(targetId)){
+                if (toId.equals(target)){
                     return true;
                 }
                 if (!visited.contains(toId)){
@@ -117,8 +123,8 @@ public class Network {
 
     // BFS: Check if target can be reached from given node
     // Overload to allow search without excluded nodes
-    public boolean isPath(String sourceId, String targetId){
-        return isPath(sourceId, targetId, new HashSet<>(){});
+    public boolean isPath(String source, String target){
+        return isPath(source, target, new HashSet<>(){});
     }
 
     // DFS traversal to check connectivity (recursive)

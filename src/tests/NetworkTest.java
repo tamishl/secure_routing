@@ -142,4 +142,26 @@ public class NetworkTest {
         assertEquals(expected, network.minCostPath("S1","D"));
 
     }
+
+    @Test
+    public void maxFlowCorrect() {
+        Network network = new Network(new TrustSystem(100));
+        network.createNode("S1");
+        network.createNode("A");
+        network.createNode("B");
+        network.createNode("C");
+        network.createNode("D");
+
+        network.insertEdge("S1", "A", 100, 0.4);
+        network.insertEdge("S1", "B", 50, 0.2);
+        network.insertEdge("A", "C", 70, 0.3);
+        network.insertEdge("B", "C", 60, 0.1);
+        network.insertEdge("C", "D", 80, 0.5);
+        network.insertEdge("A", "D", 200, 0.9);
+
+        List<String> expected = new ArrayList<>();
+
+        assertEquals(50, network.maxFlow("S1","D"));
+
+    }
 }

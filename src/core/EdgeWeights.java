@@ -4,16 +4,16 @@ package core;
 public class EdgeWeights {
     final int capacity;
 
-    double time;
+    double cost;
     int residual;
 
-    public EdgeWeights(int capacity, double time) {
+    public EdgeWeights(int capacity, double cost) {
         this.capacity = capacity;
         this.residual = capacity;
-        this.time = time;
+        this.cost = cost;
     }
 
     public String toString() {
-        return "capacity:" + capacity + ", time:" + time;
+        return "capacity:" + capacity + ", cost:" + cost;
     }
 }

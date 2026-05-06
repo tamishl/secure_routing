@@ -25,16 +25,16 @@ public class Main{
 //
 //            network.printGraph();
 
-            network.createHost("A");
-            network.createHost("B");
-            network.createHost("C");
-            network.createHost("D");
-            network.createHost("E");
-            network.createHost("F");
-            network.createHost("G");
-            network.createHost("H");
-            network.createHost("I");
-            network.createHost("J");
+            network.createNode("A");
+            network.createNode("B");
+            network.createNode("C");
+            network.createNode("D");
+            network.createNode("E");
+            network.createNode("F");
+            network.createNode("G");
+            network.createNode("H");
+            network.createNode("I");
+            network.createNode("J");
 
             network.insertEdge("A", "D", 50, 0.5);
             network.insertEdge("A", "B", 40, 0.4);

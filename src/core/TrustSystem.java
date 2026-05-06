@@ -32,7 +32,7 @@ public class TrustSystem {
         trustScores.put(id, newScore>= 0 ? newScore : 0);
     }
 
-    public void addHost(String id) {
+    public void addNode(String id) {
         trustScores.put(id, initScore);
     }
 }

@@ -11,16 +11,16 @@ public class NetworkTest {
     @Test
     public void isPathTrue() {
         Network network = new Network(new TrustSystem(100));
-        network.createHost("A");
-        network.createHost("B");
-        network.createHost("C");
-        network.createHost("D");
-        network.createHost("E");
-        network.createHost("F");
-        network.createHost("G");
-        network.createHost("H");
-        network.createHost("I");
-        network.createHost("J");
+        network.createNode("A");
+        network.createNode("B");
+        network.createNode("C");
+        network.createNode("D");
+        network.createNode("E");
+        network.createNode("F");
+        network.createNode("G");
+        network.createNode("H");
+        network.createNode("I");
+        network.createNode("J");
 
         network.insertEdge("A", "D", 50, 0.5);
         network.insertEdge("A", "B", 40, 0.4);
@@ -54,16 +54,16 @@ public class NetworkTest {
     @Test
     public void isPathFalse() {
         Network network = new Network(new TrustSystem(100));
-        network.createHost("A");
-        network.createHost("B");
-        network.createHost("C");
-        network.createHost("D");
-        network.createHost("E");
-        network.createHost("F");
-        network.createHost("G");
-        network.createHost("H");
-        network.createHost("I");
-        network.createHost("J");
+        network.createNode("A");
+        network.createNode("B");
+        network.createNode("C");
+        network.createNode("D");
+        network.createNode("E");
+        network.createNode("F");
+        network.createNode("G");
+        network.createNode("H");
+        network.createNode("I");
+        network.createNode("J");
 
         network.insertEdge("A", "D", 50, 0.5);
         network.insertEdge("A", "B", 40, 0.4);
@@ -98,11 +98,11 @@ public class NetworkTest {
     @Test
     public void minCostCorrectMap() {
         Network network = new Network(new TrustSystem(100));
-        network.createHost("S1");
-        network.createHost("A");
-        network.createHost("B");
-        network.createHost("C");
-        network.createHost("D");
+        network.createNode("S1");
+        network.createNode("A");
+        network.createNode("B");
+        network.createNode("C");
+        network.createNode("D");
 
         network.insertEdge("S1", "A", 100, 0.4);
         network.insertEdge("S1", "B", 50, 0.2);
@@ -123,11 +123,11 @@ public class NetworkTest {
     @Test
     public void minCostPathCorrectPath() {
         Network network = new Network(new TrustSystem(100));
-        network.createHost("S1");
-        network.createHost("A");
-        network.createHost("B");
-        network.createHost("C");
-        network.createHost("D");
+        network.createNode("S1");
+        network.createNode("A");
+        network.createNode("B");
+        network.createNode("C");
+        network.createNode("D");
 
         network.insertEdge("S1", "A", 100, 0.4);
         network.insertEdge("S1", "B", 50, 0.2);

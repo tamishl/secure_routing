@@ -2,12 +2,12 @@ package core;
 
 import java.util.Objects;
 
-public class Host {
+public class Node {
     String id;
     int vulnerability;
 
 
-    public Host(String id) {
+    public Node(String id) {
         this.id = id;
     }
 
@@ -26,8 +26,8 @@ public class Host {
         if (this == object) return true;        //Direct comparison of hashCode
         if (object == null || getClass() != object.getClass()) return false;
 
-        Host host = (Host) object;
-        return Objects.equals(id, host.id);       //Comparison of values
+        Node node = (Node) object;
+        return Objects.equals(id, node.id);       //Comparison of values
     }
 
     @Override

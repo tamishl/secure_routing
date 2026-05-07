@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Main{
     public static void main(String[] args){
-        NetworkGenerator networkGenerator = new NetworkGenerator(1, 1, 1, 0.1, 0.9, 100, 1.0);
+        NetworkGenerator networkGenerator = new NetworkGenerator(3, 1, 1, 0.1, 0.9, 100, 1.0);
 
         Network network = networkGenerator.generate(7);
         network.printGraph();

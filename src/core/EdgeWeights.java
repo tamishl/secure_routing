@@ -14,6 +14,6 @@ public class EdgeWeights {
     }
 
     public String toString() {
-        return "capacity:" + capacity + ", cost:" + cost;
+        return "capacity: " + capacity + ", cost: " + cost;
     }
 }

@@ -3,19 +3,19 @@ package core;
 import java.util.*;
 
 public class Network {
-    private TrustSystem trustSystem;
+//    private TrustSystem trustSystem;
     private HashMap<String, Node> nodes = new HashMap<>();
     
     Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
 
-    public Network(TrustSystem trustSystem) {
-        this.trustSystem = trustSystem;
-    }
+//    public Network(TrustSystem trustSystem) {
+//        this.trustSystem = trustSystem;
+//    }
 
     public void createNode(String id) {
         nodes.put(id, new Node(id));
         outEdges.put(id, new HashMap<>());
-        trustSystem.addNode(id);
+//        trustSystem.addNode(id);
     }
 
     public void insertEdge(String fromId, String toId, int capacity, double time){
@@ -142,11 +142,9 @@ public class Network {
     public void printGraph(){
         EdgeWeights ew;
         for (String nodeId : nodes.keySet()) {
-            System.out.println(nodeId + ":");
+            System.out.println(nodeId);
             for (Map.Entry<String, EdgeWeights> entry: outEdges.get(nodeId).entrySet()){
-                ew = entry.getValue();
-                System.out.println(entry.getKey());
-                System.out.print(ew.toString());
+                System.out.println("-> " + entry.getKey() + ": " + entry.getValue().toString());
             }
         }
     }

@@ -10,7 +10,7 @@ public class NetworkTest {
 
     @Test
     public void isPathTrue() {
-        Network network = new Network(new TrustSystem(100));
+        Network network = new Network();
         network.createNode("A");
         network.createNode("B");
         network.createNode("C");
@@ -53,7 +53,7 @@ public class NetworkTest {
 
     @Test
     public void isPathFalse() {
-        Network network = new Network(new TrustSystem(100));
+        Network network = new Network();
         network.createNode("A");
         network.createNode("B");
         network.createNode("C");
@@ -97,7 +97,7 @@ public class NetworkTest {
 
     @Test
     public void minCostCorrectMap() {
-        Network network = new Network(new TrustSystem(100));
+        Network network = new Network();
         network.createNode("S1");
         network.createNode("A");
         network.createNode("B");
@@ -122,7 +122,7 @@ public class NetworkTest {
 
     @Test
     public void minCostPathCorrectPath() {
-        Network network = new Network(new TrustSystem(100));
+        Network network = new Network();
         network.createNode("S1");
         network.createNode("A");
         network.createNode("B");
@@ -145,7 +145,7 @@ public class NetworkTest {
 
     @Test
     public void maxFlowCorrect() {
-        Network network = new Network(new TrustSystem(100));
+        Network network = new Network();
         network.createNode("S1");
         network.createNode("A");
         network.createNode("B");

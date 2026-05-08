@@ -1,6 +1,6 @@
 import core.Network;
-import core.NetworkGenerator;
-import core.RandomNumberGenerator;
+import core.utils.NetworkGenerator;
+import core.utils.RandomNumberGenerator;
 
 import java.util.Random;
 

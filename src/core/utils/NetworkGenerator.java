@@ -1,4 +1,6 @@
-package core;
+package core.utils;
+
+import core.Network;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

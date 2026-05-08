@@ -3,23 +3,20 @@ package core;
 import java.util.*;
 
 public class Network {
-//    private TrustSystem trustSystem;
     private HashMap<String, Node> nodes = new HashMap<>();
     
     Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
 
-//    public Network(TrustSystem trustSystem) {
-//        this.trustSystem = trustSystem;
-//    }
 
-    public void createNode(String id) {
-        nodes.put(id, new Node(id));
-        outEdges.put(id, new HashMap<>());
-//        trustSystem.addNode(id);
+    public void addNodeIfAbsent(String id, double probability) {
+        if (!nodes.containsKey(id)) {
+            nodes.put(id, new Node(id, probability));
+            outEdges.put(id, new HashMap<>());
+        }
     }
 
-    public void insertEdge(String fromId, String toId, int capacity, double time){
-        outEdges.get(fromId).put(toId, new EdgeWeights(capacity, time));
+    public void insertEdge(String fromId, String toId, int capacity, double cost){
+        outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
     }
 
     public Integer maxFlow(String source, String target){

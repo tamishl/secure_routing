@@ -1,17 +1,16 @@
 import core.Network;
 import core.NetworkGenerator;
-import core.TrustSystem;
+import core.RandomNumberGenerator;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 public class Main{
     public static void main(String[] args){
-        NetworkGenerator networkGenerator = new NetworkGenerator(3, 1, 1, 0.1, 0.9, 100, 1.0);
-
-        Network network = networkGenerator.generate(7);
+        RandomNumberGenerator rng = new RandomNumberGenerator(new Random());
+        NetworkGenerator ng = new NetworkGenerator.Builder(rng).build();
+        Network network = ng.getNetwork("network1.csv");
         network.printGraph();
+
 
 //            Network network = new Network(new TrustSystem(100.00));
 //            network.createHost("S1");

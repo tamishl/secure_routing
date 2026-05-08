@@ -4,19 +4,20 @@ import java.util.Objects;
 
 public class Node {
     String id;
-    int vulnerability;
+    double probability;
 
 
-    public Node(String id) {
+    public Node(String id, double probability) {
         this.id = id;
+        this.probability = probability;
     }
 
     public String toString() {
         return id;
     }
 
-    public void setVulnerability(int vulnerability) {
-        this.vulnerability = vulnerability;
+    public void setProbability(int probability) {
+        this.probability = probability;
     }
 
     //Override equals to make sure vertices with the same value are considered as equal

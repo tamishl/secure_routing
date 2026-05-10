@@ -1,5 +1,5 @@
 import core.Network;
-import core.utils.NetworkGenerator;
+import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
 
 import java.util.Random;
@@ -7,9 +7,10 @@ import java.util.Random;
 public class Main{
     public static void main(String[] args){
         RandomNumberGenerator rng = new RandomNumberGenerator(new Random());
-        NetworkGenerator ng = new NetworkGenerator.Builder(rng).build();
-        Network network = ng.getNetwork("network1.csv");
+        NetworkReader ng = new NetworkReader.Builder(rng).build();
+        Network network = ng.getNetwork("1s2n1d-edges.csv");
         network.printGraph();
+
 
 
 //            Network network = new Network(new TrustSystem(100.00));
@@ -20,14 +21,7 @@ public class Main{
 //            network.createHost("B");
 //            network.createHost("D");
 //
-//            // From Wei et al. with own given capacity
-//            network.insertEdge("S1", "A", 100, 0.4);
-//            network.insertEdge("S2", "A", 50, 0.4);
-//            network.insertEdge("S2", "B", 50, 0.4);
-//            network.insertEdge("S3", "A", 100, 0.6);
-//            network.insertEdge("S3", "B", 100, 0.5);
-//            network.insertEdge("A", "D", 100, 0.4);
-//            network.insertEdge("B", "D", 150, 0.9);
+
 //
 //            network.printGraph();
 

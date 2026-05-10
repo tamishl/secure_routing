@@ -8,9 +8,28 @@ public class Network {
     Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
 
 
+    public void addNodeIfAbsent(String id, NodeType type, double probability) {
+        if (!nodes.containsKey(id)) {
+            nodes.put(id, new Node(id, type, probability));
+            outEdges.put(id, new HashMap<>());
+        }
+    }
+
+    // Infer NodeType by ID prefix
     public void addNodeIfAbsent(String id, double probability) {
         if (!nodes.containsKey(id)) {
-            nodes.put(id, new Node(id, probability));
+            NodeType type;
+            if (id.startsWith(NodeType.SOURCE.getPrefix())){
+                type = NodeType.SOURCE;
+            }
+            else if (id.startsWith(NodeType.DESTINATION.getPrefix())){
+                type = NodeType.DESTINATION;
+            }
+            else {
+                type = NodeType.INNER_NODE;
+            }
+
+            nodes.put(id, new Node(id, type, probability));
             outEdges.put(id, new HashMap<>());
         }
     }

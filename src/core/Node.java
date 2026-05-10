@@ -4,11 +4,13 @@ import java.util.Objects;
 
 public class Node {
     String id;
+    NodeType type;
     double probability;
 
 
-    public Node(String id, double probability) {
+    public Node(String id, NodeType type, double probability) {
         this.id = id;
+        this.type = type;
         this.probability = probability;
     }
 

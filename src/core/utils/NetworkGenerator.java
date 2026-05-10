@@ -1,133 +1,155 @@
-package core.utils;
-
-import core.Network;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-public class NetworkGenerator {
-    public Builder builder;
-
-    public RandomNumberGenerator rng;
-
-    public int minFlow;
-    public int maxFlow;
-
-    public int costDecimals;
-    public double minCost;
-    public double maxCost;
-
-    public int probabilityDecimals;
-    public double minProbability;
-    public double maxProbability;
-
-    public NetworkGenerator(Builder builder){
-        this.rng = builder.rng;
-        this.minFlow = builder.minFlow;
-        this.maxFlow = builder.maxFlow;
-        this.costDecimals = builder.costDecimals;
-        this.minCost = builder.minCost;
-        this.maxCost = builder.maxCost;
-        this.probabilityDecimals = builder.probabilityDecimals;
-        this.minProbability = builder.minProbability;
-        this.maxProbability = builder.maxProbability;
-    }
-
-
-    public Network getNetwork(String networkFile) {
-        Network network = new Network();
-        try (BufferedReader reader = new BufferedReader(new FileReader("src//networks/" + networkFile))) {
-            String line;
-            String from;
-            String to;
-            while ((line = reader.readLine()) != null) {
-                String[] nodes = line.split(",");
-                from = nodes[0];
-                to = nodes[1];
-
-                // Add nodes and edges to network
-                network.addNodeIfAbsent(from, rng.randDouble(minProbability, maxProbability, probabilityDecimals));
-                network.addNodeIfAbsent(to, rng.randDouble(minProbability, maxProbability, probabilityDecimals));
-                // Include max values
-                network.insertEdge(from, to, rng.randInt(minFlow,  maxFlow+1), rng.randDouble(minCost, maxCost+0.1, costDecimals));
-            }
-        }
-
-        catch (IOException e){
-            System.out.println("Error reading file: " + e.getMessage());
-        }
-
-        return network;
-    }
-
-    // Default values for the fields
-    //    https://stackoverflow.com/questions/5007355/builder-pattern-in-effective-java
-    public static class Builder {
-        private RandomNumberGenerator rng;
-
-        private int minFlow = 1;
-        private int maxFlow = 100;
-
-        private int costDecimals = 1;
-        private double minCost = 0.1;
-        private double maxCost = 3.0;
-
-        private int probabilityDecimals = 2;
-        private double minProbability = 0.01;
-        private double maxProbability = 0.99;
-
-
-        public Builder(RandomNumberGenerator rng){
-            this.rng = rng;
-        }
-
-        public Builder minFlow(int value) {
-            this.minFlow = value;
-            return this;
-        }
-
-        public Builder maxFlow(int value){
-            this.maxFlow = value;
-            return this;
-        }
-
-
-        public Builder costDecimals(int value) {
-            this.costDecimals = value;
-            return this;
-        }
-
-        public Builder minCost(double value) {
-            this.minCost = value;
-            return this;
-        }
-
-        public Builder maxCost(double value){
-            this.maxCost = value;
-            return this;
-        }
-
-
-        public Builder probabilityDecimals(int value) {
-            this.probabilityDecimals = value;
-            return this;
-        }
-
-        public Builder minProbability(double value) {
-            this.minProbability = value;
-            return this;
-        }
-
-        public Builder maxProbability(double value){
-            this.maxProbability = value;
-            return this;
-        }
-
-        public NetworkGenerator build(){
-            return new NetworkGenerator(this);
-        }
-
-    }
-}
-
+//package core;
+//
+//import java.util.*;
+//
+//// Requirements:
+//// Directed graph (can not send to/through source node)
+//// |E| > |N|
+//// Each node must have at least one connection to another node
+//// No node should have a connection to itself
+//// There must be at least one path from a source node to the destination node
+//// There must be at least |N| * 0.5 edges between the source and destination node
+//
+//public class NetworkGeneratorX {
+//    int innerNodeCnt;
+//    int sourceCnt;
+//    int sinkCnt;
+//
+//    double minRisk;
+//    double maxRisk;
+//
+//    // Assuming 0 as minimum
+//    double maxCost;
+//    int maxCapacity;
+//
+//    Set<String> sourceChild = new HashSet<>();
+//    Set<String> sinkParent = new HashSet<>();
+//
+//    public NetworkGeneratorX(int innerNodeCnt, int sourceCnt, int sinkCnt, double minRisk, double maxRisk, int maxCapacity, double  maxCost){
+//        this.innerNodeCnt = Math.max(3, innerNodeCnt); // at least 4 nodes
+//        this.sourceCnt = sourceCnt;
+//        this.sinkCnt = sinkCnt;
+//        this.minRisk = minRisk;
+//        this.maxRisk = maxRisk;
+//        this.maxCapacity = maxCapacity;
+//        this.maxCost = maxCost;
+//    }
+//
+//    public Network generate(int seed){
+//        Network network = new Network();
+//        Set<String> edges= new HashSet<>();
+//        Random random = new Random(seed);
+//
+//        // Create nodes
+//        // Source nodes S
+//        List<String> sources =  createNodes(NodeType.SOURCE.getPrefix(), sourceCnt);
+//
+//        // Sink nodes D (destination)
+//        List<String> sinks =  createNodes(NodeType.DESTINATION.getPrefix(), sinkCnt);
+//
+//        // Internal nodes N
+//        List<String> nodes =  createNodes(NodeType.INNER_NODE.getPrefix(), innerNodeCnt);
+//
+//
+//        // Add nodes to network
+//        addNodes(sources, network);
+//        addNodes(nodes, network);
+//        addNodes(sinks, network);
+//
+//
+//        // Add edges
+//        for (String source: sources) {
+//            for (String sink: sinks) {
+//                createBasePath(source, sink, nodes, random);
+//            }
+//        }
+//
+//        // 2 to 4 outgoing connections for sources
+//        addEdges(network, sources, nodes, 1, Math.min(4, innerNodeCnt-1), random);
+//
+//        // 1 to 4 incoming connections for sinks
+//        addEdges(network, sinks, nodes, 1, Math.min(4, innerNodeCnt-1), random, true);
+//
+//        // 2 to (innerNode*0.5) outgoing connections for internal nodes
+//        addEdges(network, nodes, nodes, 2, (int)Math.ceil(innerNodeCnt*0.5), random);
+//
+//
+//        return network;
+//
+//        }
+//
+//    private void createBasePath(String source, String sink, List<String> nodes, Random random){
+//        // Amount of hops is 50-75% of |N|
+//        int hops = (int)Math.ceil(nodes.size()*0.5) + random.nextInt(nodes.size()/4);
+//        Set<String> visited = new HashSet<>();
+//
+//        visited.add(source);
+//    }
+//
+//
+//    private ArrayList<String> createNodes(String prefix, int count){
+//        ArrayList<String> nodes = new ArrayList<>();
+//        for(int i = 1; i <= count; i++){
+//            nodes.add(prefix+i);
+//        }
+//
+//        return nodes;
+//    }
+//
+//    private void addNodes(Collection<String> nodes, Network network){
+//        for (String s: nodes){
+//            network.addNodeIfAbsent(s, 0.5);
+//        }
+//    }
+//
+//    private void addEdges(Network network, List<String> groupA, List<String> groupB, int minEdge, int maxEdge, Random random){
+//        addEdges(network, groupA, groupB, minEdge, maxEdge, random, false);
+//    }
+//
+//
+//    // For each element in groupA connect with one element in groupB (direction is either from A to B or reversed)
+//    private void addEdges(Network network, List<String> groupA, List<String> groupB, int minEdge, int maxEdge, Random random, Boolean reversed) {
+//        String from;
+//        String to;
+//        int outEdgeCnt;
+//        int count;
+//
+//        for (String n : groupA) {
+//            // outEdgeCnt to limit the amount of outgoing edges per node
+//            outEdgeCnt = minEdge + ((maxEdge > minEdge) ? random.nextInt(maxEdge-minEdge) : 0);
+//            count = 0;
+//            while (count < outEdgeCnt) {
+//                // Swap direction
+//                if (reversed){
+//                    from = groupB.get(random.nextInt(groupB.size()));
+//                    to = n;
+//                }
+//                else {
+//                    from = n;
+//                    to = groupB.get(random.nextInt(groupB.size()));
+//                }
+//
+//                // No self-loops in case nodes appear in both groups
+//                if (from.equals(to)){
+//                    continue;
+//                }
+//
+//                // Ensure no duplicates (no parallel edges in the same direction)
+//                if (!network.outEdges.get(from).containsKey(to)) {
+//                    network.insertEdge(from, to, 100, 0.5);
+//                    count += 1;
+//                    if (from.startsWith(NodeType.SOURCE.getPrefix())){
+//                        sourceChild.add(to);
+//                    }
+//                    else if (to.startsWith(NodeType.DESTINATION.getPrefix())){
+//                        sinkParent.add(to);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//
+//
+//
+//}

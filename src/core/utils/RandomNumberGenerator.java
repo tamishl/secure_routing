@@ -13,13 +13,16 @@ public class RandomNumberGenerator {
 
     // Min inclusive, max exclusive
     public int randInt(int min, int max){
-        return random.nextInt(min, max);
+        return min != max
+                ? random.nextInt(min, max)
+                : min;
     }
 
     // Min inclusive, max exclusive
     public double randDouble(double min, double max, int decimals){
-        double d = random.nextDouble(min, max);
-        return roundDouble(d, decimals);
+        return min != max
+                ? roundDouble(random.nextDouble(min, max), decimals)
+                : min;
         }
 
     // 1 decimal by default

@@ -1,6 +1,6 @@
 package core.utils;
 
-public enum Section {
+public enum FileSection {
     NONE,
     NODES,
     EDGES

@@ -1,5 +1,5 @@
 import core.Network;
-import core.RandomNumberGenerator;
+import core.utils.RandomNumberGenerator;
 import core.utils.NetworkReader;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ public class NetworkTest {
     @Test
     public void isPathTrue() {
         Random random = new Random(10);
-        NetworkReader networkReader = new NetworkReader.Builder(new core.utils.RandomNumberGenerator(random)).build();
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s8n1d-edges.csv");
 
         assertTrue(network.isPath("S", "D"));
@@ -22,7 +22,7 @@ public class NetworkTest {
     @Test
     public void isPathFalse() {
         Random random = new Random(10);
-        NetworkReader networkReader = new NetworkReader.Builder(new core.utils.RandomNumberGenerator(random)).build();
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s8n1d-edges.csv");
 
         assertFalse(network.isPath("A", "E"));
@@ -32,7 +32,7 @@ public class NetworkTest {
     @Test
     public void minCostCorrectMap() {
         Random random = new Random(10);
-        NetworkReader networkReader = new NetworkReader.Builder(new core.utils.RandomNumberGenerator(random)).build();
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         Map<String, String> expected = new HashMap<>();
@@ -47,7 +47,7 @@ public class NetworkTest {
     @Test
     public void minCostPathCorrectPath() {
         Random random = new Random(10);
-        NetworkReader networkReader = new NetworkReader.Builder(new core.utils.RandomNumberGenerator(random)).build();
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
@@ -59,7 +59,7 @@ public class NetworkTest {
     @Test
     public void maxFlowCorrect() {
         Random random = new Random(10);
-        NetworkReader networkReader = new NetworkReader.Builder(new core.utils.RandomNumberGenerator(random)).build();
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         assertEquals(50, network.maxFlow("S1","D"));

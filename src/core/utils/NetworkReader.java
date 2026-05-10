@@ -36,7 +36,7 @@ public class NetworkReader {
 
     public Network getNetwork(String networkFile) {
         Network network = new Network();
-        Section section = Section.NONE;
+        FileSection section = FileSection.NONE;
         List<String> headers = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("src//networks/" + networkFile))) {
             String line;
@@ -49,14 +49,18 @@ public class NetworkReader {
                 // Select section
                 switch (line) {
                     case "[NODES]" -> {
-                        section = Section.NODES;
+                        section = FileSection.NODES;
                         headers = List.of();
                         continue;
                     }
 
+                    // Assumes order [NODES] - [EDGES]
+                    // If only section [EDGES], file will be treated as having no sections, so the nodes will be inferred.
                     case "[EDGES]" -> {
-                        section = Section.EDGES;
-                        headers = List.of();
+                        if (section==FileSection.NODES) {
+                            section = FileSection.EDGES;
+                            headers = List.of();
+                        }
                         continue;
                     }
                 }

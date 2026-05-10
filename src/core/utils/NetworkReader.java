@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class NetworkReader {
-    public RandomNumberGenerator rng;
+    public RandomNumberGenerator randNumGenerator;
 
     public int minFlow;
     public int maxFlow;
@@ -22,7 +22,7 @@ public class NetworkReader {
     public double maxProbability;
 
     public NetworkReader(Builder builder){
-        this.rng = builder.rng;
+        this.randNumGenerator = builder.randNumGenerator;
         this.minFlow = builder.minFlow;
         this.maxFlow = builder.maxFlow;
         this.costDecimals = builder.costDecimals;
@@ -111,7 +111,7 @@ public class NetworkReader {
         if (valueMap.containsKey(Field.PROBABILITY.getValue())) {
             probability = Double.parseDouble(valueMap.get("probability"));
         } else {
-            probability = rng.randDouble(minProbability, maxProbability, probabilityDecimals);
+            probability = randNumGenerator.randDouble(minProbability, maxProbability, probabilityDecimals);
         }
 
         network.addNodeIfAbsent(id, probability);
@@ -126,13 +126,13 @@ public class NetworkReader {
         if (valueMap.containsKey(Field.CAPACITY.getValue())) {
             capacity = Integer.parseInt(valueMap.get(Field.CAPACITY.getValue()));
         } else {
-            capacity = rng.randInt(minFlow, maxFlow+1);
+            capacity = randNumGenerator.randInt(minFlow, maxFlow+1);
         }
 
         if (valueMap.containsKey(Field.COST.getValue())) {
             cost = Double.parseDouble(valueMap.get(Field.COST.getValue()));
         } else {
-            cost = rng.randDouble(minCost, maxCost+0.1, costDecimals);
+            cost = randNumGenerator.randDouble(minCost, maxCost+0.1, costDecimals);
         }
 
         network.insertEdge(from, to, capacity, cost);
@@ -144,15 +144,15 @@ public class NetworkReader {
         String to = valueMap.get(Field.TO.getValue());
 
         // Add nodes to network
-        network.addNodeIfAbsent(from, rng.randDouble(minProbability, maxProbability, probabilityDecimals));
-        network.addNodeIfAbsent(to, rng.randDouble(minProbability, maxProbability, probabilityDecimals));
+        network.addNodeIfAbsent(from, randNumGenerator.randDouble(minProbability, maxProbability, probabilityDecimals));
+        network.addNodeIfAbsent(to, randNumGenerator.randDouble(minProbability, maxProbability, probabilityDecimals));
     }
 
 
     // Default values for the class fields
     //    https://stackoverflow.com/questions/5007355/builder-pattern-in-effective-java
     public static class Builder {
-        private RandomNumberGenerator rng;
+        private RandomNumberGenerator randNumGenerator;
 
         private int minFlow = 1;
         private int maxFlow = 100;
@@ -166,8 +166,8 @@ public class NetworkReader {
         private double maxProbability = 0.99;
 
 
-        public Builder(RandomNumberGenerator rng){
-            this.rng = rng;
+        public Builder(RandomNumberGenerator randNumGenerator){
+            this.randNumGenerator = randNumGenerator;
         }
 
         public Builder minFlow(int value) {

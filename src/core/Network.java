@@ -8,7 +8,7 @@ public class Network {
     Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
 
 
-    public void addNodeIfAbsent(String id, NodeType type, double probability) {
+    public void addNodeIfAbsent(String id, double probability, NodeType type) {
         if (!nodes.containsKey(id)) {
             nodes.put(id, new Node(id, type, probability));
             outEdges.put(id, new HashMap<>());
@@ -38,39 +38,86 @@ public class Network {
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
     }
 
-    public Integer maxFlow(String source, String target){
-        List<String> path = minCostPath(source, target);
-        String parent = path.getFirst();
-        String current;
-        Integer maxFlow = Integer.MAX_VALUE;
+    private Network getFullResidualNetwork(){
+        Network residNetwork = new Network();
+
+        String from;
+        String to;
+        // Initial flow value
+        int flow = 0;
+
+        // Include all objectives for future flexibility
+        EdgeWeights weights;
+        double cost;
+
+        for (Map.Entry<String, Map<String, EdgeWeights>> outerEntry: outEdges.entrySet()){
+            from = outerEntry.getKey();
+            residNetwork.addNodeIfAbsent(from, nodes.get(from).probability);
+            for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()){
+                // All nodes have a key in outEdges so no need to add to-nodes to the network
+                to = innerEntry.getKey();
+                cost = -innerEntry.getValue().cost;
+                residNetwork.insertEdge(to, from, flow, cost );
+            }
+        }
+
+        return residNetwork;
+    }
+
+
+    public int maxFlowInPath(String source, String destination){
+        List<String> path = minCostPath(source, destination);
+        String current = path.getFirst();
+        String parent;
+        int maxFlow = Integer.MAX_VALUE;
 
         // No outer while-loop because last element is target node
         for (int i = 1; i < path.size(); i++){
-            current = path.get(i);
+            parent = path.get(i);
             maxFlow = Math.min(maxFlow, outEdges.get(parent).get(current).capacity);
-            parent = current;
+            current = parent;
         }
 
         return maxFlow;
     }
 
+    public int maxFlow(String source, String destination){
+        List<String> parent = new ArrayList<>();
 
-    public List<String> minCostPath(String source, String target) {
+        String to = parent.getFirst();
+        String from;
+        int maxFlow = Integer.MAX_VALUE;
+
+        while(isPath(source, destination)) {
+            minCostPath(source, destination, parent);
+            for (int i = 1; i < parent.size(); i++) {
+                from = parent.get(i);
+                maxFlow = Math.min(maxFlow, outEdges.get(from).get(to).capacity);
+                to = from;
+            }
+        }
+
+        return maxFlow;
+    }
+
+    public void minCostPath(String source, String target, List<String> parent){
         if (!isPath(source, target)) {
-            return null;
+            return;
         }
 
         Map<String, String> minCosts = minCosts(source);
 
-        List<String> minPath = new ArrayList<>();
-
         // Get path from given list by tracing backwards from target
         for (String nodeId = target; nodeId != null; nodeId = minCosts.get(nodeId)){
-            minPath.add(nodeId);
+            parent.add(nodeId);
         }
+    }
 
-        Collections.reverse(minPath);
-        return minPath;
+
+    public List<String> minCostPath(String source, String target) {
+        ArrayList<String> parent = new ArrayList<>();
+        minCostPath(source, target, parent);
+        return parent;
     }
 
     // DSP to get the parent list of nodes with the min cost from the source
@@ -156,7 +203,6 @@ public class Network {
     }
 
     public void printGraph(){
-        EdgeWeights ew;
         for (String nodeId : nodes.keySet()) {
             System.out.println(nodeId);
             for (Map.Entry<String, EdgeWeights> entry: outEdges.get(nodeId).entrySet()){

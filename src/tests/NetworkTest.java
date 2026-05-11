@@ -51,7 +51,7 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "S1", "B", "C", "D");
+        Collections.addAll(expected, "D", "C", "B", "S1");
 
         assertEquals(expected, network.minCostPath("S1","D"));
     }
@@ -62,7 +62,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
-        assertEquals(50, network.maxFlow("S1","D"));
+        assertEquals(50, network.maxFlowInPath("S1","D"));
     }
 }
 

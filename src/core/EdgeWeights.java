@@ -3,7 +3,7 @@ package core;
 // Host to or String toId?
 public class EdgeWeights {
     final int capacity;
-
+    int flow = 0;
     double cost;
     int residual;
 

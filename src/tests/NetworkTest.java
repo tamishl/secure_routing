@@ -57,12 +57,30 @@ public class NetworkTest {
     }
 
     @Test
-    public void maxFlowCorrect() {
+    public void maxFlowInPathCorrect() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         assertEquals(50, network.maxFlowInPath("S1","D"));
+    }
+
+    @Test
+    public void maxFlowCorrect() {
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s4n1d-f19.csv");
+
+        assertEquals(19, network.maxFlow("S","D"));
+    }
+
+    @Test
+    public void maxFlowCorrect2() {
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s4n1d-f6.csv");
+
+        assertEquals(6, network.maxFlow("S","D"));
     }
 }
 

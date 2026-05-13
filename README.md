@@ -43,7 +43,7 @@ The affix indicates the completeness of the data, where each higher level includ
 - full: edges and all values for objectives
 - c/f/p: edges and the values for the listed objectives
   - c = cost
-  - f = flow
+  - f = flow capacity
   - p = probability
 - edges: only edges, without values for the objectives
 

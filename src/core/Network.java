@@ -5,7 +5,7 @@ import java.util.*;
 public class Network {
     private HashMap<String, Node> nodes = new HashMap<>();
     
-    Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
+    public Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
 
 
     public void addNodeIfAbsent(String id, double probability, NodeType type) {
@@ -38,30 +38,22 @@ public class Network {
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
     }
 
-    private Network getFullResidualNetwork(){
-        Network residNetwork = new Network();
 
-        String from;
-        String to;
-        // Initial flow value
-        int flow = 0;
+    private Map<String, Map<String, Integer>> getRFlowNetwork(){
+        Map<String, Map<String, Integer>> rNetwork = new HashMap<>();
+        int capacity;
 
-        // Include all objectives for future flexibility
-        EdgeWeights weights;
-        double cost;
-
-        for (Map.Entry<String, Map<String, EdgeWeights>> outerEntry: outEdges.entrySet()){
-            from = outerEntry.getKey();
-            residNetwork.addNodeIfAbsent(from, nodes.get(from).probability);
-            for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()){
-                // All nodes have a key in outEdges so no need to add to-nodes to the network
-                to = innerEntry.getKey();
-                cost = -innerEntry.getValue().cost;
-                residNetwork.insertEdge(to, from, flow, cost );
+        for (String from: nodes.keySet()){
+            rNetwork.put(from, new HashMap<>());
+            for (String to: nodes.keySet()){
+                capacity = outEdges.get(from).containsKey(to)
+                        ? outEdges.get(from).get(to).capacity
+                        : 0;
+                rNetwork.get(from).put(to, capacity);
             }
         }
 
-        return residNetwork;
+        return rNetwork;
     }
 
 
@@ -81,20 +73,41 @@ public class Network {
         return maxFlow;
     }
 
+    // Basic Ford-Fulkerson
     public int maxFlow(String source, String destination){
-        List<String> parent = new ArrayList<>();
+        Map<String, Map<String, Integer>> rNetwork = getRFlowNetwork();
+        Map<String, String> parent = getPath(source, destination, rNetwork);
 
-        String to = parent.getFirst();
+        int maxFlow = 0;
+
+        String to;
         String from;
-        int maxFlow = Integer.MAX_VALUE;
+        int pathFlow;
 
-        while(isPath(source, destination)) {
-            minCostPath(source, destination, parent);
-            for (int i = 1; i < parent.size(); i++) {
-                from = parent.get(i);
-                maxFlow = Math.min(maxFlow, outEdges.get(from).get(to).capacity);
+        while (parent != null) {
+            to = destination;
+            pathFlow = Integer.MAX_VALUE;
+
+            // Get maximum flow over given path / bottleneck
+            // Skip first since to is already initialized
+            while (!to.equals(source)) {
+                from = parent.get(to);
+                pathFlow = Math.min(pathFlow, rNetwork.get(from).get(to));
                 to = from;
             }
+
+            // Add to total flow
+            maxFlow += pathFlow;
+
+            // Update residual network: subtract flow from given direction, add in reversed direction
+            to = destination;
+            while (!to.equals(source)) {
+                from = parent.get(to);
+                rNetwork.get(from).put(to, rNetwork.get(from).get(to) - pathFlow);
+                rNetwork.get(to).put(from, rNetwork.get(to).get(from) + pathFlow);
+                to = from;
+            }
+            parent = getPath(source, destination, rNetwork);
         }
 
         return maxFlow;
@@ -113,7 +126,7 @@ public class Network {
         }
     }
 
-
+    // Same implementation but without changing state
     public List<String> minCostPath(String source, String target) {
         ArrayList<String> parent = new ArrayList<>();
         minCostPath(source, target, parent);
@@ -147,8 +160,8 @@ public class Network {
             for (Map.Entry<String, EdgeWeights> entry : getEdges(current).entrySet()) {
                 e = entry.getKey();
                 ew = entry.getValue();
-                cost = ew.capacity + costTo.get(current);
-                if (cost < costTo.get(entry.getKey())) {
+                cost = ew.cost + costTo.get(current);
+                if (cost < costTo.get(e)) {
                     costTo.put(e, cost);
                     parents.put(e, current);
                 }
@@ -163,9 +176,42 @@ public class Network {
 
 
     // BFS: Check if target can be reached from given node
-    public boolean isPath(String source, String target, Set<String> excluded){
+    // If so, return path
+    public Map<String, String> getPath(String source, String target, Map<String, Map<String, Integer>> rNetwork){
+        Map<String, String> parent = new HashMap<>();
         Queue<String> queue = new LinkedList<>();
-        Set<String> visited = new HashSet<>(excluded);
+        Set<String> visited = new HashSet<>();
+        queue.add(source);
+        visited.add(source);
+
+        String from;
+        while (!queue.isEmpty()){
+            from = queue.poll();
+            for (String to : getEdges(from).keySet()){
+                // Skip if no capacity on edge
+                if (rNetwork.get(from).get(to) == 0){
+                    continue;
+                }
+
+                if (to.equals(target)){
+                    parent.put(to, from);
+                    return parent;
+                }
+                if (!visited.contains(to)){
+                    queue.add(to);
+                    parent.put(to, from);
+                    visited.add(to);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // BFS: Check if target can be reached from given node
+    public boolean isPath(String source, String target){
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
         queue.add(source);
 
         while (!queue.isEmpty()){
@@ -182,12 +228,6 @@ public class Network {
         }
 
         return false;
-    }
-
-    // BFS: Check if target can be reached from given node
-    // Overload to allow search without excluded nodes
-    public boolean isPath(String source, String target){
-        return isPath(source, target, new HashSet<>(){});
     }
 
     // DFS traversal to check connectivity (recursive)

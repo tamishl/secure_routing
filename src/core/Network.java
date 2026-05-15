@@ -46,6 +46,11 @@ public class Network {
         for (String from: nodes.keySet()){
             rNetwork.put(from, new HashMap<>());
             for (String to: nodes.keySet()){
+                // Nothing can flow back to source nodes or to itself
+                // If uncommented, make sure other algorithms don't try to access these non-existent edges
+//                if (from.equals(to) || nodes.get(to).type == NodeType.SOURCE){
+//                    continue;
+//                }
                 capacity = outEdges.get(from).containsKey(to)
                         ? outEdges.get(from).get(to).capacity
                         : 0;
@@ -56,8 +61,12 @@ public class Network {
         return rNetwork;
     }
 
+    // Bellman-Ford
+    public Map<String, String> minCostParentBF(){
+        return null;
+    }
 
-    public int maxFlowInPath(String source, String destination){
+    public int maxFlowMinPath(String source, String destination){
         List<String> path = minCostPath(source, destination);
         String current = path.getFirst();
         String parent;
@@ -73,7 +82,7 @@ public class Network {
         return maxFlow;
     }
 
-    // Basic Ford-Fulkerson
+    // Basic Ford-Fulkerson: maximum possible flow from S to D
     public int maxFlow(String source, String destination){
         Map<String, Map<String, Integer>> rNetwork = getRFlowNetwork();
         Map<String, String> parent = getPath(source, destination, rNetwork);
@@ -113,33 +122,33 @@ public class Network {
         return maxFlow;
     }
 
-    public void minCostPath(String source, String target, List<String> parent){
+    public void minCostPath(String source, String target, List<String> path){
         if (!isPath(source, target)) {
             return;
         }
 
-        Map<String, String> minCosts = minCosts(source);
+        Map<String, String> parents = minCostParents(source);
 
         // Get path from given list by tracing backwards from target
-        for (String nodeId = target; nodeId != null; nodeId = minCosts.get(nodeId)){
-            parent.add(nodeId);
+        for (String nodeId = target; nodeId != null; nodeId = parents.get(nodeId)){
+            path.add(nodeId);
         }
     }
 
-    // Same implementation but without changing state
+    // Same implementation but without changing state (no List arg)
     public List<String> minCostPath(String source, String target) {
-        ArrayList<String> parent = new ArrayList<>();
-        minCostPath(source, target, parent);
-        return parent;
+        ArrayList<String> path = new ArrayList<>();
+        minCostPath(source, target, path);
+        return path;
     }
 
     // DSP to get the parent list of nodes with the min cost from the source
-    public Map<String, String> minCosts(String source) {
+    public Map<String, String> minCostParents(String source) {
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
 
         Map<String, Double> costTo = new HashMap<>(); // Cost from source node to given node
-        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from source
+        Map<String, String> parent = new HashMap<>(); // toId, fromId that leads to lowest cost from source
 
         // Q: Initialize all or containsKey() in while-loop?
         for (String nodeId : nodes.keySet()) {
@@ -148,11 +157,12 @@ public class Network {
         costTo.put(source, 0.0);
         queue.add(source);
         double cost;
+        String current;
         EdgeWeights ew;
         String e;
 
         while (!queue.isEmpty()) {
-            String current = queue.poll();
+            current = queue.poll();
             visited.add(current);
 
             // Update total costTo if lower cost is found
@@ -163,14 +173,14 @@ public class Network {
                 cost = ew.cost + costTo.get(current);
                 if (cost < costTo.get(e)) {
                     costTo.put(e, cost);
-                    parents.put(e, current);
+                    parent.put(e, current);
                 }
                 if (!visited.contains(e)) {
                     queue.add(e);
                 }
             }
         }
-        return parents;
+        return parent;
     }
 
 

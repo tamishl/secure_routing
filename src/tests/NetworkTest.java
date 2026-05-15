@@ -41,7 +41,7 @@ public class NetworkTest {
         expected.put("C", "B");
         expected.put("D", "C");
 
-        assertEquals(expected, network.minCosts("S1"));
+        assertEquals(expected, network.minCostParents("S1"));
     }
 
     @Test
@@ -57,12 +57,12 @@ public class NetworkTest {
     }
 
     @Test
-    public void maxFlowInPathCorrect() {
+    public void maxFlowMinPathCorrect() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
-        assertEquals(50, network.maxFlowInPath("S1","D"));
+        assertEquals(50, network.maxFlowMinPath("S1","D"));
     }
 
     @Test

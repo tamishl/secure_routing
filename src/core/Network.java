@@ -1,5 +1,7 @@
 package core;
 
+import core.utils.Algorithm;
+
 import java.util.*;
 
 public class Network {
@@ -38,8 +40,101 @@ public class Network {
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
     }
 
+    public Map<String, String> findMinCostParents(String source, Algorithm algorithm){
+        if (algorithm == Algorithm.BELLMAN_FORD){
+            return bellmanFord(source);
+        }
+        else if (algorithm == Algorithm.DIJKSTRA){
+            return dijkstra(source);
+        }
 
-    private Map<String, Map<String, Integer>> getRFlowNetwork(){
+        return new HashMap<>();
+    }
+
+
+    public void minCostPath(String source, String target, List<String> path, Algorithm algorithm){
+        if (!isPath(source, target)) {
+            return;
+        }
+
+        Map<String, String> parents =
+                switch(algorithm) {
+                    case Algorithm.BELLMAN_FORD -> bellmanFord(source);
+                    case Algorithm.DIJKSTRA -> dijkstra(source);
+                }
+        ;
+
+            // Get path from given list by tracing backwards from target
+        for (String nodeId = target; nodeId != null; nodeId = parents.get(nodeId)){
+            path.add(nodeId);
+        }
+    }
+
+    // Same implementation but without changing state (no List arg)
+    public List<String> minCostPath(String source, String target, Algorithm algorithm) {
+        ArrayList<String> path = new ArrayList<>();
+        minCostPath(source, target, path,algorithm);
+        return path;
+    }
+
+
+
+    // BFS: Return first found path if target can be reached from given node, checking for flow residual
+    public Map<String, String> getPath(String source, String target, Map<String, Map<String, Integer>> rNetwork){
+        Map<String, String> parent = new HashMap<>();
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(source);
+        visited.add(source);
+
+        String from;
+        while (!queue.isEmpty()){
+            from = queue.poll();
+            for (String to : getEdges(from).keySet()){
+                // Skip if no capacity on edge
+                if (rNetwork.get(from).get(to) == 0){
+                    continue;
+                }
+
+                if (to.equals(target)){
+                    parent.put(to, from);
+                    return parent;
+                }
+                if (!visited.contains(to)){
+                    queue.add(to);
+                    parent.put(to, from);
+                    visited.add(to);
+                }
+            }
+        }
+
+        return new HashMap<>();
+    }
+
+    // BFS: Check if destination can be reached from given node without checks for flow
+    public boolean isPath(String source, String destination){
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(source);
+
+        while (!queue.isEmpty()){
+            String current = queue.poll();
+            visited.add(current);
+            for (String toId: getEdges(current).keySet()){
+                if (toId.equals(destination)){
+                    return true;
+                }
+                if (!visited.contains(toId)){
+                    queue.add(toId);
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    private Map<String, Map<String, Integer>> generateRFlowNetwork(){
         Map<String, Map<String, Integer>> rNetwork = new HashMap<>();
         int capacity;
 
@@ -61,100 +156,75 @@ public class Network {
         return rNetwork;
     }
 
+
+
+    public void printGraph(){
+        for (String nodeId : nodes.keySet()) {
+            System.out.println(nodeId);
+            for (Map.Entry<String, EdgeWeights> entry: outEdges.get(nodeId).entrySet()){
+                System.out.println("-> " + entry.getKey() + ": " + entry.getValue().toString());
+            }
+        }
+    }
+
+
+    // ---------------------------- Algorithms ----------------------------
     // Bellman-Ford
-    public Map<String, String> minCostParentBF(){
-        return null;
-    }
+    public Map<String, String> bellmanFord(String source){
+        Map<String, Double> costTo = getCostMap(source);
+        Map<String, String> parents = new HashMap<>();
 
-    public int maxFlowMinPath(String source, String destination){
-        List<String> path = minCostPath(source, destination);
-        String current = path.getFirst();
-        String parent;
-        int maxFlow = Integer.MAX_VALUE;
+        // Can add sets to avoid calculation for inaccessible nodes, but also leads to additional checks in each iteration
+//        Set<String> visitable  = new HashSet<>();
+//        visitable.add(source);
 
-        // No outer while-loop because last element is target node
-        for (int i = 1; i < path.size(); i++){
-            parent = path.get(i);
-            maxFlow = Math.min(maxFlow, outEdges.get(parent).get(current).capacity);
-            current = parent;
-        }
-
-        return maxFlow;
-    }
-
-    // Basic Ford-Fulkerson: maximum possible flow from S to D
-    public int maxFlow(String source, String destination){
-        Map<String, Map<String, Integer>> rNetwork = getRFlowNetwork();
-        Map<String, String> parent = getPath(source, destination, rNetwork);
-
-        int maxFlow = 0;
-
-        String to;
         String from;
-        int pathFlow;
+        String to;
+        double cost;
 
-        while (parent != null) {
-            to = destination;
-            pathFlow = Integer.MAX_VALUE;
+        boolean changed = true;
 
-            // Get maximum flow over given path / bottleneck
-            // Skip first since to is already initialized
-            while (!to.equals(source)) {
-                from = parent.get(to);
-                pathFlow = Math.min(pathFlow, rNetwork.get(from).get(to));
-                to = from;
+        // Iterate N times and check for negative cycles during last loop (instead of creating 2 for-loops)
+        for (int i = 0; i < nodes.size(); i++){
+            // Prevent futile iterations: stop when no improvement happened in previous cycle.
+            if (!changed){
+                return parents;
             }
+            changed = false;
 
-            // Add to total flow
-            maxFlow += pathFlow;
+            for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: outEdges.entrySet()){
+                from = outerEntry.getKey();
+                for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()){
+                    to = innerEntry.getKey();
+                    cost = costTo.get(from) + innerEntry.getValue().cost;
+                    if (cost < costTo.get(to)){
 
-            // Update residual network: subtract flow from given direction, add in reversed direction
-            to = destination;
-            while (!to.equals(source)) {
-                from = parent.get(to);
-                rNetwork.get(from).put(to, rNetwork.get(from).get(to) - pathFlow);
-                rNetwork.get(to).put(from, rNetwork.get(to).get(from) + pathFlow);
-                to = from;
+                        // If still improvement after all edges have been seen, network has a negative cycle.
+                        // Return empty map
+                        if (i == nodes.size()-1){
+                            return new HashMap<>();
+                        }
+                        changed = true;
+                        costTo.put(to, cost);
+                        parents.put(to, from);
+                    }
+                }
             }
-            parent = getPath(source, destination, rNetwork);
         }
 
-        return maxFlow;
+        return parents;
     }
 
-    public void minCostPath(String source, String target, List<String> path){
-        if (!isPath(source, target)) {
-            return;
-        }
 
-        Map<String, String> parents = minCostParents(source);
-
-        // Get path from given list by tracing backwards from target
-        for (String nodeId = target; nodeId != null; nodeId = parents.get(nodeId)){
-            path.add(nodeId);
-        }
-    }
-
-    // Same implementation but without changing state (no List arg)
-    public List<String> minCostPath(String source, String target) {
-        ArrayList<String> path = new ArrayList<>();
-        minCostPath(source, target, path);
-        return path;
-    }
-
-    // DSP to get the parent list of nodes with the min cost from the source
-    public Map<String, String> minCostParents(String source) {
+    // DSP
+    public Map<String, String> dijkstra(String source) {
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
 
-        Map<String, Double> costTo = new HashMap<>(); // Cost from source node to given node
+        // Cost from source node to given node
+        Map<String, Double> costTo = getCostMap(source);
         Map<String, String> parent = new HashMap<>(); // toId, fromId that leads to lowest cost from source
 
-        // Q: Initialize all or containsKey() in while-loop?
-        for (String nodeId : nodes.keySet()) {
-            costTo.put(nodeId, Double.MAX_VALUE);
-        }
-        costTo.put(source, 0.0);
         queue.add(source);
         double cost;
         String current;
@@ -184,60 +254,62 @@ public class Network {
     }
 
 
+    // Basic Ford-Fulkerson: maximum possible flow from S to D
+    public int maxFlow(String source, String destination){
+        Map<String, Map<String, Integer>> rNetwork = generateRFlowNetwork();
+        Map<String, String> parent = getPath(source, destination, rNetwork);
 
-    // BFS: Check if target can be reached from given node
-    // If so, return path
-    public Map<String, String> getPath(String source, String target, Map<String, Map<String, Integer>> rNetwork){
-        Map<String, String> parent = new HashMap<>();
-        Queue<String> queue = new LinkedList<>();
-        Set<String> visited = new HashSet<>();
-        queue.add(source);
-        visited.add(source);
+        int maxFlow = 0;
 
+        String to;
         String from;
-        while (!queue.isEmpty()){
-            from = queue.poll();
-            for (String to : getEdges(from).keySet()){
-                // Skip if no capacity on edge
-                if (rNetwork.get(from).get(to) == 0){
-                    continue;
-                }
+        int pathFlow;
 
-                if (to.equals(target)){
-                    parent.put(to, from);
-                    return parent;
-                }
-                if (!visited.contains(to)){
-                    queue.add(to);
-                    parent.put(to, from);
-                    visited.add(to);
-                }
+        while (!parent.isEmpty()) {
+            to = destination;
+            pathFlow = Integer.MAX_VALUE;
+
+            // Get maximum flow over given path / bottleneck
+            // Skip first since to is already initialized
+            while (!to.equals(source)) {
+                from = parent.get(to);
+                pathFlow = Math.min(pathFlow, rNetwork.get(from).get(to));
+                to = from;
             }
+
+            // Add to total flow
+            maxFlow += pathFlow;
+
+            // Update residual network: subtract flow from given direction, add in reversed direction
+            to = destination;
+            while (!to.equals(source)) {
+                from = parent.get(to);
+                rNetwork.get(from).put(to, rNetwork.get(from).get(to) - pathFlow);
+                rNetwork.get(to).put(from, rNetwork.get(to).get(from) + pathFlow);
+                to = from;
+            }
+            parent = getPath(source, destination, rNetwork);
         }
 
-        return null;
+        return maxFlow;
     }
 
-    // BFS: Check if target can be reached from given node
-    public boolean isPath(String source, String target){
-        Queue<String> queue = new LinkedList<>();
-        Set<String> visited = new HashSet<>();
-        queue.add(source);
 
-        while (!queue.isEmpty()){
-            String current = queue.poll();
-            visited.add(current);
-            for (String toId: getEdges(current).keySet()){
-                if (toId.equals(target)){
-                    return true;
-                }
-                if (!visited.contains(toId)){
-                    queue.add(toId);
-                }
-            }
+    // Maximum flow in the cheapest path
+    public int maxFlowMinPath(String source, String destination, Algorithm algorithm){
+        List<String> path = minCostPath(source, destination, algorithm);
+        String current = path.getFirst();
+        String parent;
+        int maxFlow = Integer.MAX_VALUE;
+
+        // No outer while-loop because last element is target node
+        for (int i = 1; i < path.size(); i++){
+            parent = path.get(i);
+            maxFlow = Math.min(maxFlow, outEdges.get(parent).get(current).capacity);
+            current = parent;
         }
 
-        return false;
+        return maxFlow;
     }
 
     // DFS traversal to check connectivity (recursive)
@@ -252,14 +324,8 @@ public class Network {
             visitDepthFirst(toId, visited);
     }
 
-    public void printGraph(){
-        for (String nodeId : nodes.keySet()) {
-            System.out.println(nodeId);
-            for (Map.Entry<String, EdgeWeights> entry: outEdges.get(nodeId).entrySet()){
-                System.out.println("-> " + entry.getKey() + ": " + entry.getValue().toString());
-            }
-        }
-    }
+
+
 
     // Getters
     public Node getNode(String str){
@@ -273,6 +339,21 @@ public class Network {
 
     public Map<String, EdgeWeights> getEdges(String nodeId){
         return outEdges.get(nodeId);
+    }
+
+
+    private  Map<String, Double> getCostMap(String source){
+        Map<String, Double> costMap = new HashMap<>(); // Cost from source node to given node
+
+        for (String node : nodes.keySet()) {
+            if (node.equals(source)){
+                costMap.put(node, 0.0);
+                continue;
+            }
+            costMap.put(node, Double.MAX_VALUE);
+        }
+
+        return costMap;
     }
 
 }

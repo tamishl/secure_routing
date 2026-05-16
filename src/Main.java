@@ -26,7 +26,7 @@ public class Main{
         network.insertEdge("A", "D", 70, 3.0);
         network.insertEdge("B", "D", 60, 2.0);
 
-        System.out.println(network.minCostPath("S1", "D"));
+//        System.out.println(network.minCostPath("S1", "D"));
 
 
     }

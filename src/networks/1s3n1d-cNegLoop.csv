@@ -1,0 +1,8 @@
+from,to,cost,flow
+S,A,5.0
+S,B,5.0
+A,C,7.0
+B,A,-6.0
+B,D,3.0
+C,B,-3.0
+C,D,3.0

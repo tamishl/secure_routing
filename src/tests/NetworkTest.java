@@ -1,4 +1,5 @@
 import core.Network;
+import core.utils.Algorithm;
 import core.utils.RandomNumberGenerator;
 import core.utils.NetworkReader;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class NetworkTest {
         expected.put("C", "B");
         expected.put("D", "C");
 
-        assertEquals(expected, network.minCostParents("S1"));
+        assertEquals(expected, network.dijkstra("S1"));
     }
 
     @Test
@@ -53,17 +54,27 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, network.minCostPath("S1","D"));
+        assertEquals(expected, network.minCostPath("S1","D", Algorithm.DIJKSTRA));
     }
 
     @Test
-    public void maxFlowMinPathCorrect() {
+    public void maxFlowMinPathDijkstraCorrect() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
-        assertEquals(50, network.maxFlowMinPath("S1","D"));
+        assertEquals(50, network.maxFlowMinPath("S1","D", Algorithm.DIJKSTRA));
     }
+
+    @Test
+    public void maxFlowMinPathBFCorrect() {
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+
+        assertEquals(50, network.maxFlowMinPath("S1","D", Algorithm.BELLMAN_FORD));
+    }
+
 
     @Test
     public void maxFlowCorrect() {
@@ -81,6 +92,29 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
         assertEquals(6, network.maxFlow("S","D"));
+    }
+
+
+    @Test
+    public void minCostParentBFCorrectParents(){
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s2n1d-cNeg.csv");
+
+        Map<String, String> expected = new HashMap<>();
+        expected.put("D", "A");
+        expected.put("A", "B");
+        expected.put("B", "S");
+        assertEquals(expected, network.bellmanFord("S"));
+    }
+
+    @Test
+    public void minCostParentBFDetectNegativeLoop(){
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s3n1d-cNegLoop.csv");
+
+        assertTrue(network.bellmanFord("S").isEmpty());
     }
 }
 

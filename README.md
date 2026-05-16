@@ -6,7 +6,6 @@ Node type abbreviations:
 - N = inner node
 - D = destination node
 
-
 ## src/NetworkReader
 Used to extract a network from a csv file.
 Has inner class Builder with default values for random generation of values for the objectives.
@@ -46,6 +45,10 @@ The affix indicates the completeness of the data, where each higher level includ
   - f = flow capacity
   - p = probability
 - edges: only edges, without values for the objectives
+- extra information: some file names contain extra information
+  - If it is related to a specific objective, it will be connected to that objectives abbreviation with camelCase.
+  - E.g., cNegLoop: with cost and a negative loop for costs.
+  - E.g., f19: with flow and a maximum flow of 19.
 
 E.g., 1s3n1d-edges.csv:
 - 1 source node

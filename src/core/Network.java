@@ -40,20 +40,11 @@ public class Network {
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
     }
 
-    public Map<String, String> findMinCostParents(String source, Algorithm algorithm){
-        if (algorithm == Algorithm.BELLMAN_FORD){
-            return bellmanFord(source);
-        }
-        else if (algorithm == Algorithm.DIJKSTRA){
-            return dijkstra(source);
-        }
-
-        return new HashMap<>();
-    }
 
 
-    public void minCostPath(String source, String target, List<String> path, Algorithm algorithm){
-        if (!isPath(source, target)) {
+
+    public void minCostPath(String source, String destination, List<String> path, Algorithm algorithm){
+        if (!isPath(source, destination)) {
             return;
         }
 
@@ -65,8 +56,8 @@ public class Network {
         ;
 
             // Get path from given list by tracing backwards from target
-        for (String nodeId = target; nodeId != null; nodeId = parents.get(nodeId)){
-            path.add(nodeId);
+        for (String node = destination; node != null; node = parents.get(node)){
+            path.add(node);
         }
     }
 
@@ -79,8 +70,8 @@ public class Network {
 
 
 
-    // BFS: Return first found path if target can be reached from given node, checking for flow residual
-    public Map<String, String> getPath(String source, String target, Map<String, Map<String, Integer>> rNetwork){
+    // BFS: Return first found path if target can be reached from given node, checking for residual flow.
+    public Map<String, String> getParents(String source, String target, Map<String, Map<String, Integer>> rNetwork){
         Map<String, String> parent = new HashMap<>();
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
@@ -257,7 +248,7 @@ public class Network {
     // Basic Ford-Fulkerson: maximum possible flow from S to D
     public int maxFlow(String source, String destination){
         Map<String, Map<String, Integer>> rNetwork = generateRFlowNetwork();
-        Map<String, String> parent = getPath(source, destination, rNetwork);
+        Map<String, String> parent = getParents(source, destination, rNetwork);
 
         int maxFlow = 0;
 
@@ -270,7 +261,6 @@ public class Network {
             pathFlow = Integer.MAX_VALUE;
 
             // Get maximum flow over given path / bottleneck
-            // Skip first since to is already initialized
             while (!to.equals(source)) {
                 from = parent.get(to);
                 pathFlow = Math.min(pathFlow, rNetwork.get(from).get(to));
@@ -288,7 +278,7 @@ public class Network {
                 rNetwork.get(to).put(from, rNetwork.get(to).get(from) + pathFlow);
                 to = from;
             }
-            parent = getPath(source, destination, rNetwork);
+            parent = getParents(source, destination, rNetwork);
         }
 
         return maxFlow;
@@ -302,7 +292,6 @@ public class Network {
         String parent;
         int maxFlow = Integer.MAX_VALUE;
 
-        // No outer while-loop because last element is target node
         for (int i = 1; i < path.size(); i++){
             parent = path.get(i);
             maxFlow = Math.min(maxFlow, outEdges.get(parent).get(current).capacity);

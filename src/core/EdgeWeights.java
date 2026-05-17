@@ -5,11 +5,9 @@ public class EdgeWeights {
     final int capacity;
     int flow = 0;
     double cost;
-    int residual;
 
     public EdgeWeights(int capacity, double cost) {
         this.capacity = capacity;
-        this.residual = capacity;
         this.cost = cost;
     }
 

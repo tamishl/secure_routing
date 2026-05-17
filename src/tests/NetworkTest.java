@@ -1,5 +1,6 @@
 import core.Network;
 import core.utils.Algorithm;
+import core.utils.FlowCost;
 import core.utils.RandomNumberGenerator;
 import core.utils.NetworkReader;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,19 @@ public class NetworkTest {
     }
 
     @Test
-    public void minCostPathDJCorrectPath2() {
+    public void minCostPathBFCorrect() {
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+
+        List<String> expected = new ArrayList<>();
+        Collections.addAll(expected, "D", "C", "B", "S1");
+
+        assertEquals(expected, network.minCostPath("S1","D", Algorithm.BELLMAN_FORD));
+    }
+
+    @Test
+    public void minCostPathDJCorrectPath() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
@@ -127,6 +140,17 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-cNegLoop.csv");
 
         assertTrue(network.bellmanFord("S").isEmpty());
+    }
+
+    @Test
+    public void minCostFlowCorrect(){
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s3n1d-cf.csv");
+        FlowCost result = network.minCostFlow("S", "D");
+
+        assertEquals(70, result.flow);
+        assertEquals(136, result.cost);
     }
 }
 

@@ -9,9 +9,11 @@ import java.util.Map;
 
 public class FlowAlgorithms {
     public final PathFinder pathFinder;
+    public final BFS bfs;
 
-    public FlowAlgorithms(PathFinder pathFinder){
+    public FlowAlgorithms(PathFinder pathFinder, BFS bfs){
         this.pathFinder = pathFinder;
+        this.bfs = bfs;
     }
 
 
@@ -65,7 +67,7 @@ public class FlowAlgorithms {
     // Basic Ford-Fulkerson: maximum possible flow from S to D
     public int maxFlow(Network network, String source, String destination){
         Map<String, Map<String, Integer>> rNetwork = network.generateResidualFlowMap();
-        Map<String, String> parent = pathFinder.getParents(network, source, destination, rNetwork);
+        Map<String, String> parent = bfs.getParents(network, source, destination, rNetwork);
 
         int maxFlow = 0;
 
@@ -95,7 +97,7 @@ public class FlowAlgorithms {
                 rNetwork.get(to).put(from, rNetwork.get(to).get(from) + pathFlow);
                 to = from;
             }
-            parent = pathFinder.getParents(network, source, destination, rNetwork);
+            parent = bfs.getParents(network, source, destination, rNetwork);
         }
 
         return maxFlow;

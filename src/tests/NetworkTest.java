@@ -97,7 +97,7 @@ public class NetworkTest {
     @Test
     public void maxFlowMinPathDijkstraCorrect() {
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
@@ -108,7 +108,7 @@ public class NetworkTest {
     @Test
     public void maxFlowMinPathBFCorrect() {
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
@@ -119,7 +119,7 @@ public class NetworkTest {
     @Test
     public void maxFlowCorrect() {
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f19.csv");
 
@@ -129,7 +129,7 @@ public class NetworkTest {
     @Test
     public void maxFlowCorrect2() {
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
@@ -162,7 +162,7 @@ public class NetworkTest {
     @Test
     public void minCostFlowCorrect(){
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-cf.csv");
         FlowCost result = flowAlgorithms.minCostFlow(network,"S", "D");

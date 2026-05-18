@@ -65,7 +65,7 @@ public class FlowAlgorithms {
     // Basic Ford-Fulkerson: maximum possible flow from S to D
     public int maxFlow(Network network, String source, String destination){
         Map<String, Map<String, Integer>> rNetwork = network.generateResidualFlowMap();
-        Map<String, String> parent = network.getParents(source, destination, rNetwork);
+        Map<String, String> parent = pathFinder.getParents(network, source, destination, rNetwork);
 
         int maxFlow = 0;
 
@@ -95,7 +95,7 @@ public class FlowAlgorithms {
                 rNetwork.get(to).put(from, rNetwork.get(to).get(from) + pathFlow);
                 to = from;
             }
-            parent = network.getParents(source, destination, rNetwork);
+            parent = pathFinder.getParents(network, source, destination, rNetwork);
         }
 
         return maxFlow;

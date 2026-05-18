@@ -38,40 +38,6 @@ public class Network {
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
     }
 
-
-    // BFS: Return first found path if target can be reached from given node, checking for residual flow.
-    public Map<String, String> getParents(String source, String target, Map<String, Map<String, Integer>> rNetwork){
-        Map<String, String> parent = new HashMap<>();
-        Queue<String> queue = new LinkedList<>();
-        Set<String> visited = new HashSet<>();
-        queue.add(source);
-        visited.add(source);
-
-        String from;
-        while (!queue.isEmpty()){
-            from = queue.poll();
-            for (String to : getEdges(from).keySet()){
-                // Skip if no capacity on edge
-                if (rNetwork.get(from).get(to) == 0){
-                    continue;
-                }
-
-                if (to.equals(target)){
-                    parent.put(to, from);
-                    return parent;
-                }
-                if (!visited.contains(to)){
-                    queue.add(to);
-                    parent.put(to, from);
-                    visited.add(to);
-                }
-            }
-        }
-
-        return new HashMap<>();
-    }
-
-
     public void printGraph(){
         for (String nodeId : nodes.keySet()) {
             System.out.println(nodeId);

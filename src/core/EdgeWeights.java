@@ -2,9 +2,9 @@ package core;
 
 // Host to or String toId?
 public class EdgeWeights {
-    final int capacity;
-    int flow = 0;
-    double cost;
+    public final int capacity;
+    public int flow = 0;
+    public double cost;
 
     public EdgeWeights(int capacity, double cost) {
         this.capacity = capacity;

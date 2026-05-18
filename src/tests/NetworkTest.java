@@ -1,8 +1,9 @@
 import core.Network;
-import core.utils.Algorithm;
+import core.algorithms.*;
 import core.utils.FlowCost;
 import core.utils.RandomNumberGenerator;
 import core.utils.NetworkReader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -11,13 +12,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NetworkTest {
 
+    private PathFinder pathFinder;
+    private BellmanFord bellmanFord;
+    private Dijkstra dijkstra;
+
+    @BeforeEach
+    void setUp(){
+        bellmanFord = new BellmanFord();
+        dijkstra = new Dijkstra();
+        pathFinder = new PathFinder(bellmanFord, dijkstra);
+    }
+
     @Test
     public void isPathTrue() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s8n1d-edges.csv");
 
-        assertTrue(network.isPath("S", "D"));
+        assertTrue(pathFinder.isPath(network,"S", "D"));
     }
 
 
@@ -27,7 +39,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s8n1d-edges.csv");
 
-        assertFalse(network.isPath("A", "E"));
+        assertFalse(pathFinder.isPath(network,"A", "E"));
     }
 
 
@@ -43,7 +55,7 @@ public class NetworkTest {
         expected.put("C", "B");
         expected.put("D", "C");
 
-        assertEquals(expected, network.dijkstra("S1"));
+        assertEquals(expected, dijkstra.dijkstra(network, "S1"));
     }
 
     @Test
@@ -55,7 +67,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, network.minCostPath("S1","D", Algorithm.DIJKSTRA));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA));
     }
 
     @Test
@@ -67,7 +79,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, network.minCostPath("S1","D", Algorithm.BELLMAN_FORD));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.BELLMAN_FORD));
     }
 
     @Test
@@ -79,44 +91,49 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, network.minCostPath("S1","D", Algorithm.DIJKSTRA_JOHNSON));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA_JOHNSON));
     }
 
     @Test
     public void maxFlowMinPathDijkstraCorrect() {
         Random random = new Random(10);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
-        assertEquals(50, network.maxFlowMinPath("S1","D", Algorithm.DIJKSTRA));
+
+        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S1","D", Algorithm.DIJKSTRA));
     }
 
     @Test
     public void maxFlowMinPathBFCorrect() {
         Random random = new Random(10);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
-        assertEquals(50, network.maxFlowMinPath("S1","D", Algorithm.BELLMAN_FORD));
+        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S1", "D", Algorithm.BELLMAN_FORD));
     }
 
 
     @Test
     public void maxFlowCorrect() {
         Random random = new Random(10);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f19.csv");
 
-        assertEquals(19, network.maxFlow("S","D"));
+        assertEquals(19, flowAlgorithms.maxFlow(network, "S","D"));
     }
 
     @Test
     public void maxFlowCorrect2() {
         Random random = new Random(10);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
-        assertEquals(6, network.maxFlow("S","D"));
+        assertEquals(6, flowAlgorithms.maxFlow(network, "S","D"));
     }
 
 
@@ -130,7 +147,7 @@ public class NetworkTest {
         expected.put("D", "A");
         expected.put("A", "B");
         expected.put("B", "S");
-        assertEquals(expected, network.bellmanFord("S"));
+        assertEquals(expected, bellmanFord.bellmanFord(network, "S"));
     }
 
     @Test
@@ -139,15 +156,16 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-cNegLoop.csv");
 
-        assertTrue(network.bellmanFord("S").isEmpty());
+        assertTrue(bellmanFord.bellmanFord(network, "S").isEmpty());
     }
 
     @Test
     public void minCostFlowCorrect(){
         Random random = new Random(10);
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-cf.csv");
-        FlowCost result = network.minCostFlow("S", "D");
+        FlowCost result = flowAlgorithms.minCostFlow(network,"S", "D");
 
         assertEquals(70, result.flow);
         assertEquals(136, result.cost);

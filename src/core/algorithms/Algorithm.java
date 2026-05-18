@@ -1,4 +1,4 @@
-package core.utils;
+package core.algorithms;
 
 public enum Algorithm {
     DIJKSTRA,

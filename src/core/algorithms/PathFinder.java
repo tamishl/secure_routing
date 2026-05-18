@@ -25,7 +25,7 @@ public class PathFinder {
                 switch(algorithm) {
                     case Algorithm.BELLMAN_FORD -> bellmanFord.bellmanFord(network, source);
                     case Algorithm.DIJKSTRA -> dijkstra.dijkstra(network, source);
-                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.dijkstraJohnson(network, source);
+                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.dijkstraJohnson(network, source, residual);
                 }
                 ;
 

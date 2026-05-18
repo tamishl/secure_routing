@@ -7,7 +7,7 @@ import core.utils.CostToNode;
 import java.util.*;
 
 public class Dijkstra {
-    // DSP
+
     public Map<String, String> dijkstra(Network network, String source) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
@@ -46,7 +46,7 @@ public class Dijkstra {
 
 
 
-    // DSP
+
     public Map<String, String> dijkstraJohnson(Network network, String source, Map<String, Map<String, EdgeWeights>> edges) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();

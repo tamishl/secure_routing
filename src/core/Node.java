@@ -18,10 +18,6 @@ public class Node {
         return id;
     }
 
-    public void setProbability(int probability) {
-        this.probability = probability;
-    }
-
     //Override equals to make sure vertices with the same value are considered as equal
     //Code provided by IntelliJ IDE (Generate >> equals() and hashCode())
     @Override

@@ -1,7 +1,7 @@
-package core.utils;
+package core.algorithms.models;
 
 //    https://www.geeksforgeeks.org/dsa/dijkstras-shortest-path-algorithm-using-priority_queue-stl/
-// Class for PriorityQ in dijkstra to prioritize nodes with a lower cost from the source
+// Class for PriorityQ in computeDijkstra to prioritize nodes with a lower cost from the source
 
 public class CostToNode implements Comparable<CostToNode> {
     public String nodeId;

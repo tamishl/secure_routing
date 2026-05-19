@@ -26,7 +26,7 @@ public class Network {
                 type = NodeType.DESTINATION;
             }
             else {
-                type = NodeType.INNER_NODE;
+                type = NodeType.INNER;
             }
 
             nodes.put(id, new Node(id, type, probability));

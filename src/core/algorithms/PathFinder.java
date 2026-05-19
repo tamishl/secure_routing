@@ -23,9 +23,9 @@ public class PathFinder {
 
         Map<String, String> parents =
                 switch(algorithm) {
-                    case Algorithm.BELLMAN_FORD -> bellmanFord.bellmanFord(network, source);
-                    case Algorithm.DIJKSTRA -> dijkstra.dijkstra(network, source);
-                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.dijkstraJohnson(network, source, residual);
+                    case Algorithm.BELLMAN_FORD -> bellmanFord.compute(network, source);
+                    case Algorithm.DIJKSTRA -> dijkstra.computeDijkstra(network, source);
+                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, residual);
                 }
                 ;
 
@@ -34,15 +34,11 @@ public class PathFinder {
         }
 
         // Get path from given list by tracing backwards from target
-        for (String node = destination; node != null; node = parents.get(node)){
-            path.add(node);
+        for (String nodeId = destination; nodeId != null; nodeId = parents.get(nodeId)){
+            path.add(nodeId);
         }
 
         return path;
-    }
-
-    public List<String> minCostPath(Network network, String source, String destination, Algorithm algorithm){
-        return minCostPath(network, source, destination, algorithm, network.generateResidualMap());
     }
 
     // BFS: Check if destination can be reached from given node without checks for flow

@@ -8,7 +8,7 @@ import static java.util.stream.Collectors.toMap;
 
 public enum NodeType {
     SOURCE("S"),
-    INNER_NODE("N"),
+    INNER("N"),
     DESTINATION("D");
 
     private final String prefix;

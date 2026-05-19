@@ -1,6 +1,6 @@
 import core.Network;
 import core.algorithms.*;
-import core.utils.FlowCost;
+import core.algorithms.models.FlowCost;
 import core.utils.RandomNumberGenerator;
 import core.utils.NetworkReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +55,7 @@ public class NetworkTest {
         expected.put("C", "B");
         expected.put("D", "C");
 
-        assertEquals(expected, dijkstra.dijkstra(network, "S1"));
+        assertEquals(expected, dijkstra.computeDijkstra(network, "S1"));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA, network.generateResidualMap()));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.BELLMAN_FORD));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.BELLMAN_FORD, network.generateResidualMap()));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA_JOHNSON));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA_JOHNSON, network.generateResidualMap()));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class NetworkTest {
         expected.put("D", "A");
         expected.put("A", "B");
         expected.put("B", "S");
-        assertEquals(expected, bellmanFord.bellmanFord(network, "S"));
+        assertEquals(expected, bellmanFord.compute(network, "S"));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-cNegLoop.csv");
 
-        assertTrue(bellmanFord.bellmanFord(network, "S").isEmpty());
+        assertTrue(bellmanFord.compute(network, "S").isEmpty());
     }
 
     @Test

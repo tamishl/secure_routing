@@ -48,7 +48,7 @@
 //        List<String> sinks =  createNodes(NodeType.DESTINATION.getPrefix(), sinkCnt);
 //
 //        // Internal nodes N
-//        List<String> nodes =  createNodes(NodeType.INNER_NODE.getPrefix(), innerNodeCnt);
+//        List<String> nodes =  createNodes(NodeType.INNER.getPrefix(), innerNodeCnt);
 //
 //
 //        // Add nodes to network

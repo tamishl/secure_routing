@@ -174,6 +174,12 @@ public class NetworkReader {
             this.randNumGenerator = randNumGenerator;
         }
 
+        public NetworkReader build(){
+            return new NetworkReader(this);
+        }
+
+        // 'Setters'
+        // Return itself to allow chaining
         public Builder minFlow(int value) {
             this.minFlow = value;
             return this;
@@ -214,10 +220,6 @@ public class NetworkReader {
         public Builder maxProbability(double value){
             this.maxProbability = value;
             return this;
-        }
-
-        public NetworkReader build(){
-            return new NetworkReader(this);
         }
     }
 }

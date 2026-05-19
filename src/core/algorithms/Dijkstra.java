@@ -2,13 +2,13 @@ package core.algorithms;
 
 import core.EdgeWeights;
 import core.Network;
-import core.utils.CostToNode;
+import core.algorithms.models.CostToNode;
 
 import java.util.*;
 
 public class Dijkstra {
 
-    public Map<String, String> dijkstra(Network network, String source) {
+    public Map<String, String> computeDijkstra(Network network, String source) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -47,7 +47,7 @@ public class Dijkstra {
 
 
 
-    public Map<String, String> dijkstraJohnson(Network network, String source, Map<String, Map<String, EdgeWeights>> edges) {
+    public Map<String, String> computeDijkstraJohnson(Network network, String source, Map<String, Map<String, EdgeWeights>> edges) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -68,12 +68,10 @@ public class Dijkstra {
         EdgeWeights ew;
 
         boolean canFlow = false;
-        double cheapest;
 
         while (!queue.isEmpty()) {
             from = queue.poll().nodeId;
             visited.add(from);
-            cheapest = Double.POSITIVE_INFINITY;
 
             // Update total costTo if lower cost is found
             // Save parent to keep track of path
@@ -106,10 +104,5 @@ public class Dijkstra {
             }
         }
         return parent;
-    }
-
-    public Map<String, String> dijkstraJohnson(Network network, String source){
-        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
-        return dijkstraJohnson(network, source, residual);
     }
 }

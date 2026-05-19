@@ -7,7 +7,7 @@ import java.util.Map;
 import core.Network;
 
 public class BellmanFord {
-    public Map<String, String> bellmanFord(Network network, String source){
+    public Map<String, String> compute(Network network, String source){
         Map<String, Double> costTo = network.generateCostMap(source);
         Map<String, String> parents = new HashMap<>();
 

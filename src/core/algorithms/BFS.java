@@ -6,7 +6,7 @@ import java.util.*;
 
 public class BFS {
     // Return first found path if target can be reached from given node, checking for residual flow (i.e. min hops)
-    public Map<String, String> getParents(Network network, String source, String target, Map<String, Map<String, Integer>> rNetwork){
+    public Map<String, String> compute(Network network, String source, String target, Map<String, Map<String, Integer>> rNetwork){
         Map<String, String> parent = new HashMap<>();
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();

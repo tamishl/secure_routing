@@ -1,6 +1,6 @@
 import core.Network;
 import core.algorithms.*;
-import core.algorithms.models.FlowCost;
+import core.models.FlowCost;
 import core.utils.RandomNumberGenerator;
 import core.utils.NetworkReader;
 import org.junit.jupiter.api.BeforeEach;

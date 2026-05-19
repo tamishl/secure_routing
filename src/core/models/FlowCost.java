@@ -1,4 +1,4 @@
-package core.algorithms.models;
+package core.models;
 
 public class FlowCost {
     public int flow;

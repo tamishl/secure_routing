@@ -1,4 +1,4 @@
-package core.algorithms.models;
+package core.models;
 
 //    https://www.geeksforgeeks.org/dsa/dijkstras-shortest-path-algorithm-using-priority_queue-stl/
 // Class for PriorityQ in computeDijkstra to prioritize nodes with a lower cost from the source

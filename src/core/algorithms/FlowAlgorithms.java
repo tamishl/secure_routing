@@ -2,7 +2,7 @@ package core.algorithms;
 
 import core.EdgeWeights;
 import core.Network;
-import core.algorithms.models.FlowCost;
+import core.models.FlowCost;
 
 import java.util.List;
 import java.util.Map;

@@ -24,8 +24,8 @@ public class FlowAlgorithms {
         int currentFlow;
         double totalCost = 0.0;
 
-        String from;
-        String to;
+        String parent;
+        String child;
         EdgeWeights ew;
 
         List<String> path = pathFinder.minCostPath(network, source, destination, Algorithm.DIJKSTRA_JOHNSON, residual);
@@ -33,15 +33,15 @@ public class FlowAlgorithms {
         while(!path.isEmpty()) {
             currentFlow = pathBottleneck(path, residual);
             totalFlow += currentFlow;
-            to = path.getFirst();
+            child = path.getFirst();
 
             // Update residual graph and track cost
             for (int i = 1; i < path.size(); i++){
-                from = path.get(i);
+                parent = path.get(i);
 
                 // If reversed edge: flow in opposite direction than path
-                if (residual.get(to).get(from).flow != 0){
-                    ew = residual.get(to).get(from);
+                if (residual.get(child).get(parent).flow != 0){
+                    ew = residual.get(child).get(parent);
                     totalCost -= ew.cost * currentFlow;
                     ew.flow -= currentFlow;
 
@@ -49,12 +49,12 @@ public class FlowAlgorithms {
 
                 // If original edge
                 else {
-                    ew = residual.get(from).get(to);
+                    ew = residual.get(parent).get(child);
                     ew.flow += currentFlow;
                     totalCost += ew.cost * currentFlow;
                 }
 
-                to = from;
+                child = parent;
             }
 
             path = pathFinder.minCostPath(network, source, destination, Algorithm.DIJKSTRA_JOHNSON, residual);

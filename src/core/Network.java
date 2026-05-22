@@ -63,6 +63,21 @@ public class Network {
         return costMap;
     }
 
+
+    public  Map<String, Double> generateCostMap2(String source){
+        Map<String, Double> costMap = new HashMap<>(); // Cost from source node to given node
+
+        for (String node : nodes.keySet()) {
+            if (node.equals(source)){
+                costMap.put(node, 0.0);
+                continue;
+            }
+            costMap.put(node, Double.MAX_VALUE);
+        }
+
+        return costMap;
+    }
+
     public Map<String, Map<String, EdgeWeights>> generateCopyMap(){
         Map<String, Map<String, EdgeWeights>> rNetwork = new HashMap<>();
 

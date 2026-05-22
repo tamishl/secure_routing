@@ -29,14 +29,17 @@ public class PathFinder {
                 }
                 ;
 
-        if (parents.isEmpty()){
+        // If the target has not been reached
+        if (!parents.containsKey(destination)){
             return path;
         }
 
-        // Get path from given list by tracing backwards from target
+
         for (String nodeId = destination; nodeId != null; nodeId = parents.get(nodeId)){
             path.add(nodeId);
+
         }
+        System.out.println();
 
         return path;
     }

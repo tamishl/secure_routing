@@ -1,0 +1,10 @@
+from,to,capacity
+S,A,10
+S,B,9
+A,B,8
+A,C,7
+A,E,4
+B,E,7
+C,D,8
+E,C,4
+E,D,11

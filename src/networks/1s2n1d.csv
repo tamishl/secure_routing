@@ -1,0 +1,6 @@
+from,to,cost
+S,A,7.0
+S,B,2.0
+A,D,2.0
+B,A,1.0
+B,D,5,0

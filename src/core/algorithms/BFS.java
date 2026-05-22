@@ -1,5 +1,6 @@
 package core.algorithms;
 
+import core.EdgeWeights;
 import core.Network;
 
 import java.util.*;

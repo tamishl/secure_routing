@@ -14,18 +14,14 @@ public class PathFinder {
         this.dijkstra = dijkstra;
     }
 
-    public List<String> minCostPath(Network network, String source, String destination, Algorithm algorithm, Map<String, Map<String, EdgeWeights>> residual){
-        if (!isPath(network, source, destination)) {
-            return new ArrayList<>();
-        }
-
+    public List<String> minCostPath(Network network, String source, String destination, Algorithm algorithm){
         List<String> path = new ArrayList<>();
 
         Map<String, String> parents =
                 switch(algorithm) {
                     case Algorithm.BELLMAN_FORD -> bellmanFord.compute(network, source);
                     case Algorithm.DIJKSTRA -> dijkstra.computeDijkstra(network, source);
-                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, residual);
+                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, network.generateResidualMap(), new HashMap<>());
                 }
                 ;
 
@@ -39,7 +35,33 @@ public class PathFinder {
             path.add(nodeId);
 
         }
-        System.out.println();
+
+        return path;
+    }
+
+
+
+    public List<String> minCostPath(Network network, String source, String destination, Algorithm algorithm, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+        List<String> path = new ArrayList<>();
+
+        Map<String, String> parents =
+                switch(algorithm) {
+                    case Algorithm.BELLMAN_FORD -> bellmanFord.compute(network, source);
+                    case Algorithm.DIJKSTRA -> dijkstra.computeDijkstra(network, source);
+                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, residual, potentials);
+                }
+                ;
+
+        // If the target has not been reached
+        if (!parents.containsKey(destination)){
+            return path;
+        }
+
+
+        for (String nodeId = destination; nodeId != null; nodeId = parents.get(nodeId)){
+            path.add(nodeId);
+
+        }
 
         return path;
     }

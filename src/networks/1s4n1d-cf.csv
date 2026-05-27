@@ -1,7 +1,7 @@
 from,to,capacity,cost
 S,A,10,2.0
 S,B,9,2.5
-A,B,8,0.5
+A,B,8,0.8
 A,C,7,1.0
 A,E,4,1.0
 B,E,7,1.5

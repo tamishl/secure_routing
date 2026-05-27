@@ -4,6 +4,7 @@ import core.EdgeWeights;
 import core.Network;
 import core.models.FlowCost;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,24 +25,30 @@ public class FlowAlgorithms {
         int currentFlow;
         double totalCost = 0.0;
 
-        String parent;
-        String child;
+        String from;
+        String to;
         EdgeWeights ew;
 
-        List<String> path = pathFinder.minCostPath(network, source, destination, Algorithm.DIJKSTRA_JOHNSON, residual);
+        Map<String, Double> potentials = new HashMap<>();
+
+        for (String node: network.nodes.keySet()){
+            potentials.put(node, 0.0);
+        }
+
+        List<String> path = pathFinder.minCostPath(network, source, destination, Algorithm.DIJKSTRA_JOHNSON, residual, potentials);
 
         while(!path.isEmpty()) {
             currentFlow = pathBottleneck(path, residual);
             totalFlow += currentFlow;
-            child = path.getFirst();
+            to = path.getFirst();
 
             // Update residual graph and track cost
             for (int i = 1; i < path.size(); i++){
-                parent = path.get(i);
+                from = path.get(i);
 
                 // If reversed edge: flow in opposite direction than path
-                if (residual.get(child).get(parent).flow != 0){
-                    ew = residual.get(child).get(parent);
+                if (residual.get(to).get(from).flow != 0){
+                    ew = residual.get(to).get(from);
                     totalCost -= ew.cost * currentFlow;
                     ew.flow -= currentFlow;
 
@@ -49,15 +56,15 @@ public class FlowAlgorithms {
 
                 // If original edge
                 else {
-                    ew = residual.get(parent).get(child);
+                    ew = residual.get(from).get(to);
                     ew.flow += currentFlow;
                     totalCost += ew.cost * currentFlow;
                 }
 
-                child = parent;
+                to = from;
             }
 
-            path = pathFinder.minCostPath(network, source, destination, Algorithm.DIJKSTRA_JOHNSON, residual);
+            path = pathFinder.minCostPath(network, source, destination, Algorithm.DIJKSTRA_JOHNSON, residual, potentials);
         }
 
         return new FlowCost(totalFlow, totalCost);
@@ -134,7 +141,7 @@ public class FlowAlgorithms {
     // Maximum flow in the cheapest path
     public int maxFlowMinPath(Network network, String source, String destination, Algorithm algorithm){
 
-        List<String> path = pathFinder.minCostPath(network, source, destination, algorithm, network.generateResidualMap());
+        List<String> path = pathFinder.minCostPath(network, source, destination, algorithm);
         String current = path.getFirst();
         String parent;
         int maxFlow = Integer.MAX_VALUE;

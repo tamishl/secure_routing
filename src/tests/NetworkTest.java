@@ -67,7 +67,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA, network.generateResidualMap()));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.BELLMAN_FORD, network.generateResidualMap()));
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.BELLMAN_FORD));
     }
 
     @Test
@@ -91,7 +91,12 @@ public class NetworkTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, "D", "C", "B", "S1");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA_JOHNSON, network.generateResidualMap()));
+        Map<String, Double> potentials = new HashMap<>();
+        for (String node: network.nodes.keySet()){
+            potentials.put(node, 0.0);
+        }
+
+        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA_JOHNSON, network.generateResidualMap(), potentials));
     }
 
     @Test

@@ -47,19 +47,12 @@ public class Dijkstra {
 
 
 
-    public Map<String, String> computeDijkstraJohnson(Network network, String source, Map<String, Map<String, EdgeWeights>> edges) {
+    public Map<String, String> computeDijkstraJohnson(Network network, String source, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
         Map<String, Double> costTo = network.generateCostMap(source);         // Cost from source node to given node
         Map<String, String> parent = new HashMap<>();                         // child, parent that has the lowest cost from source
-
-        // Track Johnson potentials
-        Map<String, Double> potentials = new HashMap<>();
-
-        for (String node: network.nodes.keySet()){
-            potentials.put(node, 0.0);
-        }
 
         queue.add(new CostToNode(source, 0.0));
         double cost = 0;
@@ -86,7 +79,7 @@ public class Dijkstra {
                     canFlow = true;
                 }
                 // Check if previous flow to current node can be undone
-                else if (edges.get(to).get(from).flow != 0){
+                if (edges.get(to).get(from).flow != 0){
                     cost = costTo.get(from) - ew.cost + potentials.get(from) - potentials.get(to);
                     canFlow = true;
                 }
@@ -111,10 +104,6 @@ public class Dijkstra {
             potentials.put(nodeId, potential);
         }
 
-
-//            for k in range(N):
-//        pi[k] = min(pi[k] + dist[k], INF)
-//
         return parent;
     }
 }

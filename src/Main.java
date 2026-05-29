@@ -36,7 +36,7 @@ public class Main{
         Random random = new Random(10);
         FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-cf.csv");
+        Network network = networkReader.getNetwork("1s4n1d-cf.csv");
         System.out.println(flowAlgorithms.maxFlow(network, "S", "D"));
         FlowCost result = flowAlgorithms.minCostFlow(network, "S", "D");
         System.out.println(result.flow);

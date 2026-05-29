@@ -45,7 +45,7 @@
 //        List<String> sources =  createNodes(NodeType.SOURCE.getPrefix(), sourceCnt);
 //
 //        // Sink nodes D (destination)
-//        List<String> sinks =  createNodes(NodeType.DESTINATION.getPrefix(), sinkCnt);
+//        List<String> sinks =  createNodes(NodeType.SINK.getPrefix(), sinkCnt);
 //
 //        // Internal nodes N
 //        List<String> nodes =  createNodes(NodeType.INNER.getPrefix(), innerNodeCnt);
@@ -141,7 +141,7 @@
 //                    if (from.startsWith(NodeType.SOURCE.getPrefix())){
 //                        sourceChild.add(to);
 //                    }
-//                    else if (to.startsWith(NodeType.DESTINATION.getPrefix())){
+//                    else if (to.startsWith(NodeType.SINK.getPrefix())){
 //                        sinkParent.add(to);
 //                    }
 //                }

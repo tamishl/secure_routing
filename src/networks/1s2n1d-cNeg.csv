@@ -1,6 +1,6 @@
 from,to,cost
 S,A,5.0
 S,B,5.0
-A,D,3.0
+A,T,3.0
 B,A,-6.0
-B,D,2,0
+B,T,2,0

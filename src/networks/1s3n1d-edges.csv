@@ -1,7 +1,7 @@
 from,to
-S1,A
-S1,B
+S,A
+S,B
 A,C
 B,C
-C,D
-A,D
+C,T
+A,T

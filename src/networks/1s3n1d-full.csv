@@ -1,16 +1,16 @@
 [NODES]
 id,probability
-S1,0.5
+S,0.5
 A,0.5
 B,0.5
 C,0.5
-D,0.5
+T,0.5
 
 [EDGES]
 from,to,capacity,cost
-S1,A,100,0.4
-S1,B,50,0.2
+S,A,100,0.4
+S,B,50,0.2
 A,C,70,0.3
 B,C,60,0.1
-C,D,80,0.5
-A,D,200,0.9
+C,T,80,0.5
+A,T,200,0.9

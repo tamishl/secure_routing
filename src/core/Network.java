@@ -22,8 +22,8 @@ public class Network {
             if (id.startsWith(NodeType.SOURCE.getPrefix())){
                 type = NodeType.SOURCE;
             }
-            else if (id.startsWith(NodeType.DESTINATION.getPrefix())){
-                type = NodeType.DESTINATION;
+            else if (id.startsWith(NodeType.SINK.getPrefix())){
+                type = NodeType.SINK;
             }
             else {
                 type = NodeType.INNER;

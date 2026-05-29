@@ -14,7 +14,7 @@ public class PathFinder {
         this.dijkstra = dijkstra;
     }
 
-    public List<String> minCostPath(Network network, String source, String destination, Algorithm algorithm){
+    public List<String> minCostPath(Network network, String source, String sink, Algorithm algorithm){
         List<String> path = new ArrayList<>();
 
         Map<String, String> parents =
@@ -26,12 +26,12 @@ public class PathFinder {
                 ;
 
         // If the target has not been reached
-        if (!parents.containsKey(destination)){
+        if (!parents.containsKey(sink)){
             return path;
         }
 
 
-        for (String nodeId = destination; nodeId != null; nodeId = parents.get(nodeId)){
+        for (String nodeId = sink; nodeId != null; nodeId = parents.get(nodeId)){
             path.add(nodeId);
 
         }
@@ -41,7 +41,7 @@ public class PathFinder {
 
 
 
-    public List<String> minCostPath(Network network, String source, String destination, Algorithm algorithm, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+    public List<String> minCostPath(Network network, String source, String sink, Algorithm algorithm, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
         List<String> path = new ArrayList<>();
 
         Map<String, String> parents =
@@ -53,12 +53,12 @@ public class PathFinder {
                 ;
 
         // If the target has not been reached
-        if (!parents.containsKey(destination)){
+        if (!parents.containsKey(sink)){
             return path;
         }
 
 
-        for (String nodeId = destination; nodeId != null; nodeId = parents.get(nodeId)){
+        for (String nodeId = sink; nodeId != null; nodeId = parents.get(nodeId)){
             path.add(nodeId);
 
         }
@@ -66,8 +66,8 @@ public class PathFinder {
         return path;
     }
 
-    // BFS: Check if destination can be reached from given node without checks for flow
-    public boolean isPath(Network network, String source, String destination){
+    // BFS: Check if sink can be reached from given node without checks for flow
+    public boolean isPath(Network network, String source, String sink){
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
         queue.add(source);
@@ -76,7 +76,7 @@ public class PathFinder {
             String current = queue.poll();
             visited.add(current);
             for (String toId: network.getEdges(current).keySet()){
-                if (toId.equals(destination)){
+                if (toId.equals(sink)){
                     return true;
                 }
                 if (!visited.contains(toId)){

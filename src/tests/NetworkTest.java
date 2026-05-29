@@ -27,9 +27,9 @@ public class NetworkTest {
     public void isPathTrue() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s8n1d-edges.csv");
+        Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
-        assertTrue(pathFinder.isPath(network,"S", "D"));
+        assertTrue(pathFinder.isPath(network,"S", "T"));
     }
 
 
@@ -50,12 +50,12 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         Map<String, String> expected = new HashMap<>();
-        expected.put("A", "S1");
-        expected.put("B", "S1");
+        expected.put("A", "S");
+        expected.put("B", "S");
         expected.put("C", "B");
-        expected.put("D", "C");
+        expected.put("T", "C");
 
-        assertEquals(expected, dijkstra.computeDijkstra(network, "S1"));
+        assertEquals(expected, dijkstra.computeDijkstra(network, "S"));
     }
 
     @Test
@@ -65,9 +65,9 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "D", "C", "B", "S1");
+        Collections.addAll(expected, "T", "C", "B", "S");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA));
+        assertEquals(expected, pathFinder.minCostPath(network, "S","T", Algorithm.DIJKSTRA));
     }
 
     @Test
@@ -77,9 +77,9 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "D", "C", "B", "S1");
+        Collections.addAll(expected, "T", "C", "B", "S");
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.BELLMAN_FORD));
+        assertEquals(expected, pathFinder.minCostPath(network, "S","T", Algorithm.BELLMAN_FORD));
     }
 
     @Test
@@ -89,14 +89,14 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "D", "C", "B", "S1");
+        Collections.addAll(expected, "T", "C", "B", "S");
 
         Map<String, Double> potentials = new HashMap<>();
         for (String node: network.nodes.keySet()){
             potentials.put(node, 0.0);
         }
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S1","D", Algorithm.DIJKSTRA_JOHNSON, network.generateResidualMap(), potentials));
+        assertEquals(expected, pathFinder.minCostPath(network, "S","T", Algorithm.DIJKSTRA_JOHNSON, network.generateResidualMap(), potentials));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
 
-        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S1","D", Algorithm.DIJKSTRA));
+        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S","T", Algorithm.DIJKSTRA));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
-        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S1", "D", Algorithm.BELLMAN_FORD));
+        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S", "T", Algorithm.BELLMAN_FORD));
     }
 
 
@@ -128,7 +128,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f19.csv");
 
-        assertEquals(19, flowAlgorithms.maxFlow(network, "S","D"));
+        assertEquals(19, flowAlgorithms.maxFlow(network, "S","T"));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
-        assertEquals(6, flowAlgorithms.maxFlow(network, "S","D"));
+        assertEquals(6, flowAlgorithms.maxFlow(network, "S","T"));
     }
 
 
@@ -149,7 +149,7 @@ public class NetworkTest {
         Network network = networkReader.getNetwork("1s2n1d-cNeg.csv");
 
         Map<String, String> expected = new HashMap<>();
-        expected.put("D", "A");
+        expected.put("T", "A");
         expected.put("A", "B");
         expected.put("B", "S");
         assertEquals(expected, bellmanFord.compute(network, "S"));
@@ -170,7 +170,7 @@ public class NetworkTest {
         FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1d-cf.csv");
-        FlowCost result = flowAlgorithms.minCostFlow(network,"S", "D");
+        FlowCost result = flowAlgorithms.minCostFlow(network,"S", "T");
 
         assertEquals(70, result.flow);
         assertEquals(136, result.cost);
@@ -191,7 +191,7 @@ public class NetworkTest {
 //    network.addNodeIfAbsent("G", rng.randDouble(0.01,0.99));
 //    network.addNodeIfAbsent("H", rng.randDouble(0.01,0.99));
 //    network.addNodeIfAbsent("I", rng.randDouble(0.01,0.99));
-//    network.addNodeIfAbsent("D", rng.randDouble(0.01,0.99));
+//    network.addNodeIfAbsent("T", rng.randDouble(0.01,0.99));
 //
 //    network.insertEdge("S", "A", 50, 0.5);
 //    network.insertEdge("S", "B", 40, 0.4);
@@ -214,23 +214,23 @@ public class NetworkTest {
 //    network.insertEdge("G", "I", 80, 0.8);
 //
 //    network.insertEdge("H", "I", 60, 1.1);
-//    network.insertEdge("H", "D", 90, 1.3);
+//    network.insertEdge("H", "T", 90, 1.3);
 //
 //    network.insertEdge("I", "H", 40, 0.6);
-//    network.insertEdge("I", "D", 70, 0.7);
+//    network.insertEdge("I", "T", 70, 0.7);
 //    return network;
 //}
 
 //
-//        network.addNodeIfAbsent("S1",0.5);
+//        network.addNodeIfAbsent("S",0.5);
 //        network.addNodeIfAbsent("A", 0.5);
 //        network.addNodeIfAbsent("B" ,0.5);
 //        network.addNodeIfAbsent("C", 0.5);
-//        network.addNodeIfAbsent("D", 0.5);
+//        network.addNodeIfAbsent("T", 0.5);
 //
-//        network.insertEdge("S1", "A", 100, 0.4);
-//        network.insertEdge("S1", "B", 50, 0.2);
+//        network.insertEdge("S", "A", 100, 0.4);
+//        network.insertEdge("S", "B", 50, 0.2);
 //        network.insertEdge("A", "C", 70, 0.3);
 //        network.insertEdge("B", "C", 60, 0.1);
-//        network.insertEdge("C", "D", 80, 0.5);
-//        network.insertEdge("A", "D", 200, 0.9);
+//        network.insertEdge("C", "T", 80, 0.5);
+//        network.insertEdge("A", "T", 200, 0.9);

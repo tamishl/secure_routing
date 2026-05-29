@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toMap;
 public enum NodeType {
     SOURCE("S"),
     INNER("N"),
-    DESTINATION("D");
+    SINK("T");
 
     private final String prefix;
 

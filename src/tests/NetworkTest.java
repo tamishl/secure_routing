@@ -31,7 +31,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
-        assertTrue(pathFinder.isPath(network,"S", "T"));
+        assertFalse(pathFinder.path(network,"S", "T", network.generateResidualFlowMap()).isEmpty());
     }
 
 
@@ -41,7 +41,7 @@ public class NetworkTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s8n1d-edges.csv");
 
-        assertFalse(pathFinder.isPath(network,"A", "E"));
+        assertTrue(pathFinder.path(network,"A", "E", network.generateResidualFlowMap()).isEmpty());
     }
 
 
@@ -98,7 +98,7 @@ public class NetworkTest {
             potentials.put(node, 0.0);
         }
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S","T", Algorithm.DIJKSTRA_JOHNSON, network.generateResidualMap(), potentials));
+        assertEquals(expected, pathFinder.minCostPath(network, "S","T", network.generateResidualMap(), potentials));
     }
 
     @Test

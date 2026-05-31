@@ -99,40 +99,55 @@ public class Network {
     }
 
     public Map<String, Map<String, Integer>> generateResidualFlowMap(){
-        Map<String, Map<String, Integer>> rNetwork = new HashMap<>();
-        int capacity;
+        Map<String, Map<String, Integer>> residual = new HashMap<>();
 
-        for (String from: nodes.keySet()){
-            rNetwork.put(from, new HashMap<>());
-            for (String to: nodes.keySet()){
-                capacity = outEdges.get(from).containsKey(to)
-                        ? outEdges.get(from).get(to).capacity
-                        : 0;
-                rNetwork.get(from).put(to, capacity);
-            }
+        for (String from: nodes.keySet()) {
+            residual.put(from, new HashMap<>());
         }
 
-        return rNetwork;
+        String from;
+        String to;
+        int capacity;
+
+        for (Map.Entry<String, Map<String, EdgeWeights>> outer : outEdges.entrySet()){
+            from = outer.getKey();
+            for (Map.Entry<String, EdgeWeights> inner: outer.getValue().entrySet()){
+                to = inner.getKey();
+                capacity = inner.getValue().capacity;
+                residual.get(from).put(to, capacity);
+                // Add reversed edge if no antiparallel edge exists
+                if (!outEdges.get(to).containsKey(from)){
+                    residual.get(to).put(from, 0);
+                }
+            }
+        }
+        return residual;
     }
 
     public Map<String, Map<String, EdgeWeights>> generateResidualMap(){
-        Map<String, Map<String, EdgeWeights>> rNetwork = new HashMap<>();
-        int capacity;
-        double cost;
+        Map<String, Map<String, EdgeWeights>> residual = new HashMap<>();
 
-        for (String from: nodes.keySet()){
-            rNetwork.put(from, new HashMap<>());
-            for (String to: nodes.keySet()){
-                capacity = outEdges.get(from).containsKey(to)
-                        ? outEdges.get(from).get(to).capacity
-                        : 0;
-                cost = outEdges.get(from).containsKey(to)
-                        ? outEdges.get(from).get(to).cost
-                        : 0.0;
-                rNetwork.get(from).put(to, new EdgeWeights(capacity, cost));
-            }
+        for (String from: nodes.keySet()) {
+            residual.put(from, new HashMap<>());
         }
-        return rNetwork;
+
+        String from;
+        String to;
+        EdgeWeights ew;
+        for (Map.Entry<String, Map<String, EdgeWeights>> outer : outEdges.entrySet()){
+                from = outer.getKey();
+                for (Map.Entry<String, EdgeWeights> inner: outer.getValue().entrySet()){
+                    to = inner.getKey();
+                    ew = inner.getValue();
+                    residual.get(from).put(to, new EdgeWeights(ew.capacity, ew.cost));
+                    // Add reversed edge if no antiparallel edge exists
+                    if (!outEdges.get(to).containsKey(from)){
+                        // Depends cost can also be -ew.cost, depends on usage
+                        residual.get(to).put(from, new EdgeWeights(0, 0.0));
+                    }
+                }
+        }
+        return residual;
     }
 
     // Getters

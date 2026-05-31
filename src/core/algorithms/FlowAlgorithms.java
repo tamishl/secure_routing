@@ -33,7 +33,7 @@ public class FlowAlgorithms {
             potentials.put(node, 0.0);
         }
 
-        List<String> path = pathFinder.minCostPath(network, source, sink, Algorithm.DIJKSTRA_JOHNSON, residual, potentials);
+        List<String> path = pathFinder.minCostPath(network, source, sink, residual, potentials);
 
         while(!path.isEmpty()) {
             currentFlow = pathBottleneck(path, residual);
@@ -62,7 +62,7 @@ public class FlowAlgorithms {
                 to = from;
             }
 
-            path = pathFinder.minCostPath(network, source, sink, Algorithm.DIJKSTRA_JOHNSON, residual, potentials);
+            path = pathFinder.minCostPath(network, source, sink, residual, potentials);
         }
 
         return new FlowCost(totalFlow, totalCost);
@@ -71,8 +71,8 @@ public class FlowAlgorithms {
 
     // Basic Ford-Fulkerson: maximum possible flow from S to D
     public int maxFlow(Network network, String source, String sink){
-        Map<String, Map<String, Integer>> rNetwork = network.generateResidualFlowMap();
-        List<String> path = pathFinder.minCostPath(network, source, sink, Algorithm.BFS, rNetwork);
+        Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
+        List<String> path = pathFinder.path(network, source, sink, residual);
 
         int maxFlow = 0;
 
@@ -87,7 +87,7 @@ public class FlowAlgorithms {
             // Get maximum flow over given path / bottleneck
             for (int i = 1; i < path.size(); i++) {
                 parent = path.get(i);
-                pathFlow = Math.min(pathFlow, rNetwork.get(parent).get(child));
+                pathFlow = Math.min(pathFlow, residual.get(parent).get(child));
                 child = parent;
             }
 
@@ -99,12 +99,12 @@ public class FlowAlgorithms {
 
             for (int i = 1; i < path.size(); i++) {
                 parent = path.get(i);
-                rNetwork.get(parent).put(child, rNetwork.get(parent).get(child) - pathFlow);
-                rNetwork.get(child).put(parent, rNetwork.get(child).get(parent) + pathFlow);
+                residual.get(parent).put(child, residual.get(parent).get(child) - pathFlow);
+                residual.get(child).put(parent, residual.get(child).get(parent) + pathFlow);
                 child = parent;
             }
 
-            path = pathFinder.minCostPath(network, source, sink, Algorithm.BFS, rNetwork);
+            path = pathFinder.path(network, source, sink, residual);
         }
 
         return maxFlow;
@@ -120,7 +120,7 @@ public class FlowAlgorithms {
         for (int i = 1; i < path.size(); i++){
             from = path.get(i);
 
-            // If reversed edge: flow in opposite direction than path
+            // If reversed edge: flow in opposite direction of path
             if (residual.get(to).get(from).flow != 0){
                 flowRest = residual.get(to).get(from).flow;
             }

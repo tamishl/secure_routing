@@ -1,14 +1,9 @@
-import core.EdgeWeights;
 import core.Network;
 import core.algorithms.*;
 import core.models.FlowCost;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
 
-import javax.xml.transform.Source;
-import java.sql.SQLOutput;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class Main{
@@ -32,11 +27,12 @@ public class Main{
 
 //        System.out.println(network.minCostPath("S1", "D"));
 
-        PathFinder pathFinder = new PathFinder(new BellmanFord(), new Dijkstra());
+        PathFinder pathFinder = new PathFinder(new BellmanFord(), new Dijkstra(), new BFS());
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder, new BFS());
-        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s4n1d-cf.csv");
+        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
+        NetworkReader defaultNetworkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        NetworkReader customNetworkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).maxCost(50).costDecimals(2).build();
+        Network network = defaultNetworkReader.getNetwork("1s4n1d-cf.csv");
         System.out.println(flowAlgorithms.maxFlow(network, "S", "D"));
         FlowCost result = flowAlgorithms.minCostFlow(network, "S", "D");
         System.out.println(result.flow);

@@ -10,11 +10,9 @@ import java.util.Map;
 
 public class FlowAlgorithms {
     private final PathFinder pathFinder;
-    private final BFS bfs;
 
-    public FlowAlgorithms(PathFinder pathFinder, BFS bfs){
+    public FlowAlgorithms(PathFinder pathFinder){
         this.pathFinder = pathFinder;
-        this.bfs = bfs;
     }
 
 
@@ -74,7 +72,7 @@ public class FlowAlgorithms {
     // Basic Ford-Fulkerson: maximum possible flow from S to D
     public int maxFlow(Network network, String source, String sink){
         Map<String, Map<String, Integer>> rNetwork = network.generateResidualFlowMap();
-        Map<String, String> parents = bfs.compute(network, source, sink, rNetwork);
+        List<String> path = pathFinder.minCostPath(network, source, sink, Algorithm.BFS, rNetwork);
 
         int maxFlow = 0;
 
@@ -82,13 +80,13 @@ public class FlowAlgorithms {
         String parent;
         int pathFlow;
 
-        while (!parents.isEmpty()) {
+        while (!path.isEmpty()) {
             child = sink;
             pathFlow = Integer.MAX_VALUE;
 
             // Get maximum flow over given path / bottleneck
-            while (!child.equals(source)) {
-                parent = parents.get(child);
+            for (int i = 1; i < path.size(); i++) {
+                parent = path.get(i);
                 pathFlow = Math.min(pathFlow, rNetwork.get(parent).get(child));
                 child = parent;
             }
@@ -98,13 +96,15 @@ public class FlowAlgorithms {
 
             // Update residual network: subtract flow parent given direction, add in reversed direction
             child = sink;
-            while (!child.equals(source)) {
-                parent = parents.get(child);
+
+            for (int i = 1; i < path.size(); i++) {
+                parent = path.get(i);
                 rNetwork.get(parent).put(child, rNetwork.get(parent).get(child) - pathFlow);
                 rNetwork.get(child).put(parent, rNetwork.get(child).get(parent) + pathFlow);
                 child = parent;
             }
-            parents = bfs.compute(network, source, sink, rNetwork);
+
+            path = pathFinder.minCostPath(network, source, sink, Algorithm.BFS, rNetwork);
         }
 
         return maxFlow;

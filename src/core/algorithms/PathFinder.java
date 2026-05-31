@@ -7,11 +7,13 @@ import java.util.*;
 public class PathFinder {
     BellmanFord bellmanFord;
     Dijkstra dijkstra;
+    BFS bfs;
 
 
-    public PathFinder(BellmanFord bellmanFord, Dijkstra dijkstra){
+    public PathFinder(BellmanFord bellmanFord, Dijkstra dijkstra, BFS bfs){
         this.bellmanFord = bellmanFord;
         this.dijkstra = dijkstra;
+        this.bfs = bfs;
     }
 
     public List<String> minCostPath(Network network, String source, String sink, Algorithm algorithm){
@@ -21,6 +23,7 @@ public class PathFinder {
                 switch(algorithm) {
                     case Algorithm.BELLMAN_FORD -> bellmanFord.compute(network, source);
                     case Algorithm.DIJKSTRA -> dijkstra.computeDijkstra(network, source);
+                    case Algorithm.BFS -> bfs.compute(network, source, sink, network.generateResidualFlowMap());
                     case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, network.generateResidualMap(), new HashMap<>());
                 }
                 ;
@@ -48,7 +51,35 @@ public class PathFinder {
                 switch(algorithm) {
                     case Algorithm.BELLMAN_FORD -> bellmanFord.compute(network, source);
                     case Algorithm.DIJKSTRA -> dijkstra.computeDijkstra(network, source);
+                    case Algorithm.BFS -> bfs.compute(network, source, sink, network.generateResidualFlowMap());
                     case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, residual, potentials);
+                }
+                ;
+
+        // If the target has not been reached
+        if (!parents.containsKey(sink)){
+            return path;
+        }
+
+
+        for (String nodeId = sink; nodeId != null; nodeId = parents.get(nodeId)){
+            path.add(nodeId);
+
+        }
+
+        return path;
+    }
+
+
+    public List<String> minCostPath(Network network, String source, String sink, Algorithm algorithm, Map<String, Map<String, Integer>> residual){
+        List<String> path = new ArrayList<>();
+
+        Map<String, String> parents =
+                switch(algorithm) {
+                    case Algorithm.BELLMAN_FORD -> bellmanFord.compute(network, source);
+                    case Algorithm.DIJKSTRA -> dijkstra.computeDijkstra(network, source);
+                    case Algorithm.BFS -> bfs.compute(network, source, sink, residual);
+                    case Algorithm.DIJKSTRA_JOHNSON -> dijkstra.computeDijkstraJohnson(network, source, network.generateResidualMap(), new HashMap<>());
                 }
                 ;
 

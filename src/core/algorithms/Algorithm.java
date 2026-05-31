@@ -3,5 +3,6 @@ package core.algorithms;
 public enum Algorithm {
     DIJKSTRA,
     BELLMAN_FORD,
-    DIJKSTRA_JOHNSON
+    DIJKSTRA_JOHNSON,
+    BFS
 }

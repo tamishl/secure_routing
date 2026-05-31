@@ -1,13 +1,12 @@
 package core.algorithms;
 
-import core.EdgeWeights;
 import core.Network;
 
 import java.util.*;
 
 public class BFS {
-    // Return first found path if target can be reached from given node, checking for residual flow (i.e. min hops)
-    public Map<String, String> compute(Network network, String source, String target, Map<String, Map<String, Integer>> rNetwork){
+    // Return first found path if sink can be reached from given node, checking for residual flow (i.e. min hops)
+    public Map<String, String> compute(Network network, String source, String sink, Map<String, Map<String, Integer>> rNetwork){
         Map<String, String> parent = new HashMap<>();
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
@@ -23,7 +22,7 @@ public class BFS {
                     continue;
                 }
 
-                if (to.equals(target)){
+                if (to.equals(sink)){
                     parent.put(to, from);
                     return parent;
                 }

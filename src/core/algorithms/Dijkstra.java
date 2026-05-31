@@ -13,8 +13,8 @@ public class Dijkstra {
         Set<String> visited = new HashSet<>();
 
         // Cost from source node to given node
-        Map<String, Double> costTo = network.generateCostMap(source);
-        Map<String, String> parent = new HashMap<>(); // toId, fromId that leads to lowest cost from source
+        Map<String, Double> costFromSource = network.generateCostMap(source);
+        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from source
 
         queue.add(new CostToNode(source, 0.0));
         double cost;
@@ -26,22 +26,22 @@ public class Dijkstra {
             from = queue.poll().nodeId;
             visited.add(from);
 
-            // Update total costTo if lower cost is found
-            // Save parent to keep track of path
+            // Update total costFromSource if lower cost is found
+            // Save parents to keep track of path
             for (Map.Entry<String, EdgeWeights> entry : network.getEdges(from).entrySet()) {
                 to = entry.getKey();
                 ew = entry.getValue();
-                cost = ew.cost + costTo.get(from);
-                if (cost < costTo.get(to)) {
-                    costTo.put(to, cost);
-                    parent.put(to, from);
+                cost = ew.cost + costFromSource.get(from);
+                if (cost < costFromSource.get(to)) {
+                    costFromSource.put(to, cost);
+                    parents.put(to, from);
                 }
                 if (!visited.contains(to)) {
-                    queue.add(new CostToNode(to, costTo.get(to)));
+                    queue.add(new CostToNode(to, costFromSource.get(to)));
                 }
             }
         }
-        return parent;
+        return parents;
     }
 
 
@@ -51,8 +51,8 @@ public class Dijkstra {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
-        Map<String, Double> costTo = network.generateCostMap(source);         // Cost from source node to given node
-        Map<String, String> parent = new HashMap<>();                         // child, parent that has the lowest cost from source
+        Map<String, Double> costFromSource = network.generateCostMap(source);         // Cost from source node to given node
+        Map<String, String> parents = new HashMap<>();                         // child, parents that has the lowest cost from source
 
         queue.add(new CostToNode(source, 0.0));
         double cost = 0;
@@ -66,8 +66,8 @@ public class Dijkstra {
             from = queue.poll().nodeId;
             visited.add(from);
 
-            // Update total costTo if lower cost is found
-            // Save parent to keep track of path
+            // Update total costFromSource if lower cost is found
+            // Save parents to keep track of path
             for (Map.Entry<String, EdgeWeights> edge : edges.get(from).entrySet()) {
                 to = edge.getKey();
                 ew = edge.getValue();
@@ -75,35 +75,36 @@ public class Dijkstra {
                 // If flow is left or can be undone, calculate cost (Johnson reweighting)
                 // Check if can flow over original edge
                 if (ew.flow < ew.capacity){
-                    cost = costTo.get(from) + ew.cost + potentials.get(from) - potentials.get(to);
+                    cost = costFromSource.get(from) + ew.cost + potentials.get(from) - potentials.get(to);
                     canFlow = true;
                 }
                 // Check if previous flow to current node can be undone
                 if (edges.get(to).get(from).flow != 0){
-                    cost = costTo.get(from) - ew.cost + potentials.get(from) - potentials.get(to);
+                    cost = costFromSource.get(from) - ew.cost + potentials.get(from) - potentials.get(to);
                     canFlow = true;
                 }
 
+                if (canFlow){
+                    if (cost < costFromSource.get(to)) {
+                        costFromSource.put(to, cost);
+                        parents.put(to, from);
+                    }
 
-                if (canFlow && cost < costTo.get(to)) {
-                    costTo.put(to, cost);
-                    parent.put(to, from);
+                    if (!visited.contains(to)) {
+                        queue.add(new CostToNode(to, costFromSource.get(to)));
+                    }
+                    canFlow = false;
                 }
-
-                if (canFlow && !visited.contains(to)) {
-                    queue.add(new CostToNode(to, costTo.get(to)));
-                }
-                canFlow = false;
             }
         }
 
         // Update potentials
         double potential;
         for (String nodeId: potentials.keySet()){
-            potential = potentials.get(nodeId) + costTo.get(nodeId);
+            potential = potentials.get(nodeId) + costFromSource.get(nodeId);
             potentials.put(nodeId, potential);
         }
 
-        return parent;
+        return parents;
     }
 }

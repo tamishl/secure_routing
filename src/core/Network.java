@@ -150,6 +150,16 @@ public class Network {
         return residual;
     }
 
+    public Map<String, Double> generatePotentials() {
+        Map<String, Double> potentials = new HashMap<>();
+
+        for (String node : nodes.keySet()) {
+            potentials.put(node, 0.0);
+        }
+        return potentials;
+    }
+
+
     // Getters
     public Node getNode(String str){
         nodes.get(str);

@@ -41,7 +41,7 @@ public class PathFinder {
     public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
         List<String> path = new ArrayList<>();
 
-        Map<String, String> parents = dijkstra.computeDijkstraJohnson(network, source, residual, potentials);
+        Map<String, String> parents = dijkstra.computeDijkstraJohnson(network, source, sink, residual, potentials);
 
         // If the target has not been reached
         if (!parents.containsKey(sink)){

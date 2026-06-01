@@ -27,16 +27,15 @@ public class FlowAlgorithms {
         String to;
         EdgeWeights ew;
 
-        Map<String, Double> potentials = new HashMap<>();
-
-        for (String node: network.nodes.keySet()){
-            potentials.put(node, 0.0);
-        }
+        Map<String, Double> potentials = network.generatePotentials();
 
         List<String> path = pathFinder.minCostPath(network, source, sink, residual, potentials);
 
         while(!path.isEmpty()) {
-            currentFlow = pathBottleneck(path, residual);
+            // Print path (for analysis)
+            System.out.println(path);
+
+            currentFlow = this.pathBottleneckEw(path, residual);
             totalFlow += currentFlow;
             to = path.getFirst();
 
@@ -81,6 +80,9 @@ public class FlowAlgorithms {
         int pathFlow;
 
         while (!path.isEmpty()) {
+            // Print path (for analysis)
+            System.out.println(path);
+
             child = sink;
             pathFlow = Integer.MAX_VALUE;
 
@@ -110,8 +112,60 @@ public class FlowAlgorithms {
         return maxFlow;
     }
 
+
+    public FlowCost costFlow(Network network, String source, String sink){
+        Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
+        Map<String, Map<String, EdgeWeights>> original = network.generateResidualMap();
+
+        int totalFlow = 0;
+        int currentFlow;
+        double totalCost = 0.0;
+
+        String from;
+        String to;
+        double cost;
+
+        List<String> path = pathFinder.path(network, source, sink, residual);
+
+        while(!path.isEmpty()) {
+            // Print path (for analysis)
+            System.out.println(path);
+
+            // Get bottleneck
+            currentFlow = pathBottleneckInt(path, residual);
+
+            totalFlow += currentFlow;
+            to = path.getFirst();
+
+            // Update residual graph and track cost
+            for (int i = 1; i < path.size(); i++){
+                from = path.get(i);
+
+                // If reversed edge: flow in opposite direction than path
+                if (residual.get(to).get(from) != 0){
+                    cost = original.get(to).get(from).cost;
+                    totalCost -= cost * currentFlow;
+                    residual.get(to).put(from, residual.get(to).get(from)- currentFlow);
+                }
+
+                // If original edge
+                else {
+                    cost = original.get(from).get(to).cost;
+                    totalCost += cost * currentFlow;
+                    residual.get(from).put(to, residual.get(from).get(to)-currentFlow);
+                }
+
+                to = from;
+            }
+
+            path = pathFinder.path(network, source, sink, residual);
+        }
+
+        return new FlowCost(totalFlow, totalCost);
+    }
+
     // Maximum flow in the cheapest path
-    public int pathBottleneck(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
+    public int pathBottleneckEw(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
         String to = path.getFirst();
         String from;
         int flowRest;
@@ -137,6 +191,30 @@ public class FlowAlgorithms {
         return maxFlow;
     }
 
+
+    public int pathBottleneckInt(List<String> path, Map<String, Map<String, Integer>> residual){
+        String to = path.getFirst();
+        String from;
+        int flowRest;
+        int maxFlow = Integer.MAX_VALUE;
+
+        for (int i = 1; i < path.size(); i++){
+            from = path.get(i);
+
+            // If reversed edge: flow in opposite direction of path
+            if (residual.get(to).get(from) != 0){
+                flowRest = residual.get(to).get(from);
+            }
+            // If original edge
+            else {
+                flowRest = residual.get(from).get(to);
+            }
+            maxFlow = Math.min(maxFlow, flowRest);
+            to = from;
+        }
+
+        return maxFlow;
+    }
 
     // Maximum flow in the cheapest path
     public int maxFlowMinPath(Network network, String source, String sink, Algorithm algorithm){

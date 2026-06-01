@@ -47,7 +47,7 @@ public class Dijkstra {
 
 
 
-    public Map<String, String> computeDijkstraJohnson(Network network, String source, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
+    public Map<String, String> computeDijkstraJohnson(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -55,7 +55,7 @@ public class Dijkstra {
         Map<String, String> parents = new HashMap<>();                         // child, parents that has the lowest cost from source
 
         queue.add(new CostToNode(source, 0.0));
-        double cost = 0;
+        double cost = 0.0;
         String from;
         String to;
         EdgeWeights ew;
@@ -85,12 +85,24 @@ public class Dijkstra {
                 }
 
                 if (canFlow){
+                    if (cost < 0.0){
+                        System.out.println("cost: " + cost);
+                        System.out.println("from= " + from + ", to =  " + to);
+                        System.out.println("cost from source: " + costFromSource.get(from));
+                        System.out.println("edge cost: " + edges.get(to).get(from).cost);
+                        System.out.println("potential from: " + potentials.get(from));
+                        System.out.println("potential to: " + potentials.get(to));
+                    }
+                    // Epsilon check to handle floating-point precision errors
+                    if (Math.abs(cost) < 1e-9){
+                        cost = 0.0;
+                    }
                     if (cost < costFromSource.get(to)) {
                         costFromSource.put(to, cost);
                         parents.put(to, from);
                     }
 
-                    if (!visited.contains(to)) {
+                    if (!visited.contains(to) && !to.equals(sink)) {
                         queue.add(new CostToNode(to, costFromSource.get(to)));
                     }
                     canFlow = false;
@@ -101,6 +113,12 @@ public class Dijkstra {
         // Update potentials
         double potential;
         for (String nodeId: potentials.keySet()){
+            if (potentials.get(nodeId) < 0.0){
+                System.out.println("potential: " + potentials.get(nodeId));
+            }
+            if (costFromSource.get(nodeId) < 0.0){
+                System.out.println("cfs: " + costFromSource.get(nodeId));
+            }
             potential = potentials.get(nodeId) + costFromSource.get(nodeId);
             potentials.put(nodeId, potential);
         }

@@ -80,7 +80,7 @@ public class Dijkstra {
                 }
                 // Check if previous flow to current node can be undone
                 if (edges.get(to).get(from).flow != 0){
-                    cost = costFromSource.get(from) - ew.cost + potentials.get(from) - potentials.get(to);
+                    cost = costFromSource.get(from) - edges.get(to).get(from).cost + potentials.get(from) - potentials.get(to);
                     canFlow = true;
                 }
 

@@ -1,4 +1,5 @@
 import core.Network;
+import core.NodeType;
 import core.algorithms.*;
 import core.models.FlowCost;
 import core.utils.NetworkReader;
@@ -11,67 +12,75 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FlowAlgorithmsTest {
-    private PathFinder pathFinder;
+    private FlowAlgorithms flowAlgorithms;
+    private NetworkReader networkReader;
+    private final String S = NodeType.SOURCE.getPrefix();
+    private final String T = NodeType.SINK.getPrefix();
 
     @BeforeEach
     void setUp(){
         BellmanFord bellmanFord = new BellmanFord();
         Dijkstra dijkstra = new Dijkstra();
         BFS bfs = new BFS();
-        pathFinder = new PathFinder(bellmanFord, dijkstra, bfs);
-    }
-
-
-    @Test
-    public void maxFlowMinPathDijkstraCorrect() {
+        PathFinder pathFinder = new PathFinder(bellmanFord, dijkstra, bfs);
+        flowAlgorithms = new FlowAlgorithms(pathFinder);
         Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
-        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
-
-        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S","T", Algorithm.DIJKSTRA));
+        networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
     }
 
     @Test
-    public void maxFlowMinPathBFCorrect() {
-        Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
-        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
-
-        assertEquals(50, flowAlgorithms.maxFlowMinPath(network,"S", "T", Algorithm.BELLMAN_FORD));
+    public void maxFlowCorrect1() {
+        Network network = networkReader.getNetwork("1s4n1d-f6.csv");
+        assertEquals(6, flowAlgorithms.maxFlow(network, S,T));
     }
-
-
-    @Test
-    public void maxFlowCorrect() {
-        Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
-        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s4n1d-f19.csv");
-
-        assertEquals(19, flowAlgorithms.maxFlow(network, "S","T"));
-    }
-
+    
     @Test
     public void maxFlowCorrect2() {
-        Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
-        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s4n1d-f6.csv");
-
-        assertEquals(6, flowAlgorithms.maxFlow(network, "S","T"));
+        Network network = networkReader.getNetwork("1s4n1d-f19.csv");
+        assertEquals(19, flowAlgorithms.maxFlow(network, S,T));
     }
 
     @Test
-    public void minCostFlowCorrect(){
-        Random random = new Random(10);
-        FlowAlgorithms flowAlgorithms = new FlowAlgorithms(pathFinder);
-        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-cf.csv");
-        FlowCost result = flowAlgorithms.minCostFlow(network,"S", "T");
+    public void maxFlowCorrect3() {
+        Network network = networkReader.getNetwork("1s4n1d-f17.csv");
+        assertEquals(17, flowAlgorithms.maxFlow(network, S,T));
+    }
 
+    @Test
+    public void maxFlowCorrect4() {
+        Network network = networkReader.getNetwork("1s3n1d-cf.csv");
+        assertEquals(70, flowAlgorithms.maxFlow(network, S,T));
+    }
+
+    @Test
+    public void maxFlowCorrect5() {
+        Network network = networkReader.getNetwork("1s4n1d-cf-1.csv");
+        assertEquals(17, flowAlgorithms.maxFlow(network, S,T));
+    }
+
+
+    @Test
+    public void minCostFlowCorrect1(){
+        Network network = networkReader.getNetwork("1s3n1d-cf.csv");
+        FlowCost result = flowAlgorithms.minCostMaxFlow(network,S, T);
         assertEquals(70, result.flow);
-        assertEquals(136, result.cost);
+        assertEquals(136.0, result.cost);
+    }
+
+    @Test
+    public void minCostFlowCorrect2(){
+        Network network = networkReader.getNetwork("1s4n1d-cf-1.csv");
+        FlowCost result = flowAlgorithms.minCostMaxFlow(network,S, T);
+        assertEquals(17, result.flow);
+        assertEquals(101.0, result.cost);
+    }
+
+    @Test
+    public void minCostFlowCorrect3(){
+        Network network = networkReader.getNetwork("1s4n1d-cf-2.csv");
+        FlowCost result = flowAlgorithms.minCostMaxFlow(network,S, T);
+
+        assertEquals(17, result.flow);
+        assertEquals(95.0, result.cost);
     }
 }

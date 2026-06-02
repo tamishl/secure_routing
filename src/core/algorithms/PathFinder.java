@@ -54,6 +54,22 @@ public class PathFinder {
         return path;
     }
 
+    public List<String> minCostPathFlow(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
+        List<String> path = new ArrayList<>();
+
+        Map<String, String> parents = dijkstra.computeDijkstraFlow(network, source, sink, residual);
+
+        // If the target has not been reached
+        if (!parents.containsKey(sink)){
+            return path;
+        }
+
+        for (String nodeId = sink; nodeId != null; nodeId = parents.get(nodeId)){
+            path.add(nodeId);
+        }
+        return path;
+    }
+
 
     public List<String> path(Network network, String source, String sink, Map<String, Map<String, Integer>> residual){
         List<String> path = new ArrayList<>();

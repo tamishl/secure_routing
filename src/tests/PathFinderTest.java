@@ -1,4 +1,5 @@
 import core.Network;
+import core.NodeType;
 import core.algorithms.*;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
@@ -11,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PathFinderTest {
     private PathFinder pathFinder;
+    private final String S = NodeType.SOURCE.getPrefix();
+    private final String T = NodeType.SINK.getPrefix();
 
     @BeforeEach
     void setUp(){
@@ -26,7 +29,7 @@ public class PathFinderTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1d-f6.csv");
 
-        assertFalse(pathFinder.path(network,"S", "T", network.generateResidualFlowMap()).isEmpty());
+        assertFalse(pathFinder.path(network,S, T, network.generateResidualFlowMap()).isEmpty());
     }
 
     @Test
@@ -45,9 +48,9 @@ public class PathFinderTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "T", "C", "B", "S");
+        Collections.addAll(expected, T, "C", "B", S);
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S","T", Algorithm.DIJKSTRA));
+        assertEquals(expected, pathFinder.minCostPath(network, S,T, Algorithm.DIJKSTRA));
     }
 
     @Test
@@ -57,9 +60,9 @@ public class PathFinderTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "T", "C", "B", "S");
+        Collections.addAll(expected, T, "C", "B", S);
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S","T", Algorithm.BELLMAN_FORD));
+        assertEquals(expected, pathFinder.minCostPath(network, S,T, Algorithm.BELLMAN_FORD));
     }
 
     @Test
@@ -69,14 +72,14 @@ public class PathFinderTest {
         Network network = networkReader.getNetwork("1s3n1d-full.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "T", "C", "B", "S");
+        Collections.addAll(expected, T, "C", "B", S);
 
         Map<String, Double> potentials = new HashMap<>();
         for (String node: network.nodes.keySet()){
             potentials.put(node, 0.0);
         }
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S","T", network.generateResidualMap(), potentials));
+        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(), potentials));
     }
 
     @Test
@@ -86,9 +89,9 @@ public class PathFinderTest {
         Network network = networkReader.getNetwork("1s4n1d-cf-2.csv");
 
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "T", "C", "D", "B", "A", "S");
+        Collections.addAll(expected, T, "C", "D", "B", "A", S);
 
-        assertEquals(expected, pathFinder.minCostPath(network, "S","T", network.generateResidualMap(), network.generatePotentials()));
+        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
     }
 
 }

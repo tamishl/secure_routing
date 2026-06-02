@@ -4,7 +4,6 @@ import core.EdgeWeights;
 import core.Network;
 import core.models.FlowCost;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class FlowAlgorithms {
     }
 
 
-    public FlowCost minCostFlow(Network network, String source, String sink){
+    public FlowCost minCostMaxFlow(Network network, String source, String sink){
         Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
 
         int totalFlow = 0;
@@ -33,9 +32,9 @@ public class FlowAlgorithms {
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
-            System.out.println(path);
+            System.out.println(path.reversed());
 
-            currentFlow = this.pathBottleneckEw(path, residual);
+            currentFlow = this.pathBottleneck(path, residual);
             totalFlow += currentFlow;
             to = path.getFirst();
 
@@ -81,7 +80,7 @@ public class FlowAlgorithms {
 
         while (!path.isEmpty()) {
             // Print path (for analysis)
-            System.out.println(path);
+            System.out.println(path.reversed());
 
             child = sink;
             pathFlow = Integer.MAX_VALUE;
@@ -113,7 +112,7 @@ public class FlowAlgorithms {
     }
 
 
-    public FlowCost costFlow(Network network, String source, String sink){
+    public FlowCost maxFlowCost(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
         Map<String, Map<String, EdgeWeights>> original = network.generateResidualMap();
 
@@ -129,7 +128,7 @@ public class FlowAlgorithms {
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
-            System.out.println(path);
+            System.out.println(path.reversed());
 
             // Get bottleneck
             currentFlow = pathBottleneckInt(path, residual);
@@ -164,8 +163,47 @@ public class FlowAlgorithms {
         return new FlowCost(totalFlow, totalCost);
     }
 
+
+    public FlowCost minCostFlow(Network network, String source, String sink){
+        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
+
+        int totalFlow = 0;
+        int currentFlow;
+        double totalCost = 0.0;
+
+        String from;
+        String to;
+        EdgeWeights ew;
+
+        List<String> path = pathFinder.minCostPathFlow(network, source, sink, residual);
+
+        while(!path.isEmpty()) {
+            // Print path (for analysis)
+            System.out.println(path.reversed());
+
+            // Get bottleneck
+            currentFlow = pathBottleneck(path, residual);
+
+            totalFlow += currentFlow;
+            to = path.getFirst();
+
+            // Update residual graph and track cost
+            for (int i = 1; i < path.size(); i++){
+                from = path.get(i);
+                ew = residual.get(from).get(to);
+                totalCost += ew.cost * currentFlow;
+                ew.flow += currentFlow;
+                to = from;
+            }
+
+            path = pathFinder.minCostPathFlow(network, source, sink, residual);
+        }
+
+        return new FlowCost(totalFlow, totalCost);
+    }
+
     // Maximum flow in the cheapest path
-    public int pathBottleneckEw(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
+    public int pathBottleneck(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
         String to = path.getFirst();
         String from;
         int flowRest;
@@ -211,23 +249,6 @@ public class FlowAlgorithms {
             }
             maxFlow = Math.min(maxFlow, flowRest);
             to = from;
-        }
-
-        return maxFlow;
-    }
-
-    // Maximum flow in the cheapest path
-    public int maxFlowMinPath(Network network, String source, String sink, Algorithm algorithm){
-
-        List<String> path = pathFinder.minCostPath(network, source, sink, algorithm);
-        String current = path.getFirst();
-        String parent;
-        int maxFlow = Integer.MAX_VALUE;
-
-        for (int i = 1; i < path.size(); i++){
-            parent = path.get(i);
-            maxFlow = Math.min(maxFlow, network.outEdges.get(parent).get(current).capacity);
-            current = parent;
         }
 
         return maxFlow;

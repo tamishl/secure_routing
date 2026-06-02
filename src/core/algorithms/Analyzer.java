@@ -1,6 +1,6 @@
-package core;
+package core.algorithms;
 
-import core.algorithms.*;
+import core.Network;
 import core.models.FlowCost;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;

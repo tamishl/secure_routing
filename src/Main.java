@@ -1,4 +1,4 @@
-import core.Analyzer;
+import core.algorithms.Analyzer;
 import java.util.ArrayList;
 import java.util.List;
 

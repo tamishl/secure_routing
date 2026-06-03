@@ -1,0 +1,6 @@
+from,to,capacity,cost
+S,A,70,0.3
+S,B,40,0.5
+A,T,20,0.7
+A,B,80,0.3
+B,T,60,0.2

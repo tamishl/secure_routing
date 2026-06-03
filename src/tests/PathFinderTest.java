@@ -36,7 +36,7 @@ public class PathFinderTest {
     public void isPathFalse() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s8n1d-edges.csv");
+        Network network = networkReader.getNetwork("1s8n1d-edges-antiparallel.csv");
 
         assertTrue(pathFinder.path(network,"A", "E", network.generateResidualFlowMap()).isEmpty());
     }

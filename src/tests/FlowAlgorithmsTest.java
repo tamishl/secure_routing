@@ -31,37 +31,37 @@ public class FlowAlgorithmsTest {
     @Test
     public void maxFlowCorrect1() {
         Network network = networkReader.getNetwork("1s4n1t-f6.csv");
-        assertEquals(6, flowAlgorithms.maxFlow(network, S,T));
+        assertEquals(6, flowAlgorithms.maxFlow(network, S,T).flow);
     }
     
     @Test
     public void maxFlowCorrect2() {
         Network network = networkReader.getNetwork("1s4n1t-f19.csv");
-        assertEquals(19, flowAlgorithms.maxFlow(network, S,T));
+        assertEquals(19, flowAlgorithms.maxFlow(network, S,T).flow);
     }
 
     @Test
     public void maxFlowCorrect3() {
         Network network = networkReader.getNetwork("1s4n1t-f17.csv");
-        assertEquals(17, flowAlgorithms.maxFlow(network, S,T));
+        assertEquals(17, flowAlgorithms.maxFlow(network, S,T).flow);
     }
 
     @Test
     public void maxFlowCorrect4() {
         Network network = networkReader.getNetwork("1s3n1t-cf.csv");
-        assertEquals(70, flowAlgorithms.maxFlow(network, S,T));
+        assertEquals(70, flowAlgorithms.maxFlow(network, S,T).flow);
     }
 
     @Test
     public void maxFlowCorrect5() {
         Network network = networkReader.getNetwork("1s4n1t-cf-1.csv");
-        assertEquals(17, flowAlgorithms.maxFlow(network, S,T));
+        assertEquals(17, flowAlgorithms.maxFlow(network, S,T).flow);
     }
 
     @Test
     public void maxFlowCorrectRevEdge1() {
         Network network = networkReader.getNetwork("1s6n1t.csv");
-        assertEquals(2, flowAlgorithms.maxFlow(network, S,T));
+        assertEquals(2, flowAlgorithms.maxFlow(network, S,T).flow);
     }
 
 

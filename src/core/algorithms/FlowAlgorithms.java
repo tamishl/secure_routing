@@ -68,7 +68,7 @@ public class FlowAlgorithms {
 
 
     // Basic Ford-Fulkerson: maximum possible flow from S to D
-    public int maxFlow(Network network, String source, String sink){
+    public FlowCost maxFlow(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
         List<String> path = pathFinder.path(network, source, sink, residual);
 
@@ -108,10 +108,64 @@ public class FlowAlgorithms {
             path = pathFinder.path(network, source, sink, residual);
         }
 
+        double cost = costForFlow(network, residual);
+        return new FlowCost(maxFlow, cost);
+    }
+
+
+
+    // Maximum flow in the cheapest path
+    public int pathBottleneck(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
+        String to = path.getFirst();
+        String from;
+        int flowRest;
+        int maxFlow = Integer.MAX_VALUE;
+
+        for (int i = 1; i < path.size(); i++){
+            from = path.get(i);
+
+            // If reversed edge: flow in opposite direction of path
+            if (residual.get(to).get(from).flow != 0){
+                flowRest = residual.get(to).get(from).flow;
+            }
+
+            // If original edge
+            else {
+                flowRest = residual.get(from).get(to).capacity - residual.get(from).get(to).flow;
+            }
+
+            maxFlow = Math.min(maxFlow, flowRest);
+            to = from;
+        }
+
         return maxFlow;
     }
 
 
+
+
+    // Adapted functions for analysis
+
+    public double costForFlow(Network network, Map<String, Map<String, Integer>> residual){
+        double cost = 0.0;
+        String from;
+        String to;
+        EdgeWeights ew;
+
+        for (Map.Entry<String, Map<String, EdgeWeights>> outer : network.outEdges.entrySet()){
+            from = outer.getKey();
+
+            for (Map.Entry<String, EdgeWeights> inner: outer.getValue().entrySet()){
+                to = inner.getKey();
+                ew = inner.getValue();
+                cost += (ew.capacity - residual.get(from).get(to)) * ew.cost;
+            }
+        }
+
+        return cost;
+    }
+
+    // Incorrect: can not handle reversed edges properly
     public FlowCost maxFlowCost(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
         Map<String, Map<String, EdgeWeights>> original = network.generateResidualMap();
@@ -159,7 +213,6 @@ public class FlowAlgorithms {
 
             path = pathFinder.path(network, source, sink, residual);
         }
-
         return new FlowCost(totalFlow, totalCost);
     }
 
@@ -201,34 +254,6 @@ public class FlowAlgorithms {
 
         return new FlowCost(totalFlow, totalCost);
     }
-
-    // Maximum flow in the cheapest path
-    public int pathBottleneck(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
-        String to = path.getFirst();
-        String from;
-        int flowRest;
-        int maxFlow = Integer.MAX_VALUE;
-
-        for (int i = 1; i < path.size(); i++){
-            from = path.get(i);
-
-            // If reversed edge: flow in opposite direction of path
-            if (residual.get(to).get(from).flow != 0){
-                flowRest = residual.get(to).get(from).flow;
-            }
-
-            // If original edge
-            else {
-                flowRest = residual.get(from).get(to).capacity - residual.get(from).get(to).flow;
-            }
-
-            maxFlow = Math.min(maxFlow, flowRest);
-            to = from;
-        }
-
-        return maxFlow;
-    }
-
 
     public int pathBottleneckInt(List<String> path, Map<String, Map<String, Integer>> residual){
         String to = path.getFirst();

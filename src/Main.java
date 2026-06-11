@@ -9,25 +9,26 @@ public class Main{
         List<String> files = new ArrayList<>();
 
         // For report
-        files.add("1s3n1d-cf.csv");
-        files.add("1s4n1d-cf-2.csv");
-        files.add("1s2n1d-cf.csv");
-        files.add("1s3n1d-cf-1.csv");
+//        files.add("1s3n1t-cf.csv");
+//        files.add("1s4n1t-cf-2.csv");
+//        files.add("1s2n1t-cf.csv");
+//        files.add("1s3n1t-cf-1.csv");
 
 
 
         // Graphs with known result
-        files.add("1s3n1d-cf.csv");
-        files.add("1s3n1d-full.csv");
-        files.add("1s4n1d-cf-1.csv");
-        files.add("1s4n1d-cf-2.csv");
-        files.add("1s4n1d-f17.csv");
-        files.add("1s4n1d-f6.csv");
-        files.add("1s4n1d-f19.csv");
+//        files.add("1s3n1t-cf.csv");
+//        files.add("1s3n1t-full.csv");
+//        files.add("1s4n1t-cf-1.csv");
+//        files.add("1s4n1t-cf-2.csv");
+//        files.add("1s4n1t-f17.csv");
+//        files.add("1s4n1t-f6.csv");
+//        files.add("1s4n1t-f19.csv");
+        files.add("1s6n1t.csv");
 
-//         Graphs without (fully) known result: randomness in cost and/or flow
-        files.add("1s2n1d-c.csv");
-        files.add("1s3n1d-edges.csv");
+//         Graphs without known result: randomness in cost and/or flow
+//        files.add("1s2n1t-c.csv");
+//        files.add("1s3n1t-edges.csv");
 
         for(String graph: files) {
             System.out.println("FILE = " + graph);

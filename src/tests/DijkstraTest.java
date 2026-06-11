@@ -20,7 +20,7 @@ public class DijkstraTest {
     public void dijkstraCorrectMap() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
 
         Map<String, String> expected = new HashMap<>();
         expected.put("A", "S");
@@ -36,7 +36,7 @@ public class DijkstraTest {
     public void dijkstraJohnsonCorrectMap1() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
 
         Map<String, String> expected = new HashMap<>();
         expected.put("A", "S");
@@ -52,7 +52,7 @@ public class DijkstraTest {
     public void dijkstraJohnsonCorrectMap2() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s4n1d-cf-2.csv");
+        Network network = networkReader.getNetwork("1s4n1t-cf-2.csv");
 
         Map<String, String> expected = new HashMap<>();
         expected.put("A", "S");

@@ -16,11 +16,11 @@ public class Analyzer {
 
         FlowCost result;
 
-//        int flow;
-//        System.out.println("MAXIMUM FLOW: maxFlow()");
-//        System.out.println("Paths:");
-//        flow = flowAlgorithms.maxFlow(network, "S", "T");
-//        System.out.println("Flow: " + flow);
+        int flow;
+        System.out.println("MAXIMUM FLOW: maxFlow()");
+        System.out.println("Paths:");
+        flow = flowAlgorithms.maxFlow(network, "S", "T");
+        System.out.println("Flow: " + flow);
 
         System.out.println();
         System.out.println("MAXIMUM FLOW AND COST: maxFlowCost()");

@@ -27,7 +27,7 @@ public class PathFinderTest {
     public void isPathTrue() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s4n1d-f6.csv");
+        Network network = networkReader.getNetwork("1s4n1t-f6.csv");
 
         assertFalse(pathFinder.path(network,S, T, network.generateResidualFlowMap()).isEmpty());
     }
@@ -36,7 +36,7 @@ public class PathFinderTest {
     public void isPathFalse() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s8n1d-edges-antiparallel.csv");
+        Network network = networkReader.getNetwork("1s8n1t-edges-antiparallel.csv");
 
         assertTrue(pathFinder.path(network,"A", "E", network.generateResidualFlowMap()).isEmpty());
     }
@@ -45,7 +45,7 @@ public class PathFinderTest {
     public void minCostPathDijkstraCorrect() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
 
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "B", S);
@@ -57,7 +57,7 @@ public class PathFinderTest {
     public void minCostPathBFCorrect() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
 
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "B", S);
@@ -69,7 +69,7 @@ public class PathFinderTest {
     public void minCostPathDJCorrect1() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-full.csv");
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
 
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "B", S);
@@ -86,7 +86,7 @@ public class PathFinderTest {
     public void minCostPathDJCorrect2() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s4n1d-cf-2.csv");
+        Network network = networkReader.getNetwork("1s4n1t-cf-2.csv");
 
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "D", "B", "A", S);

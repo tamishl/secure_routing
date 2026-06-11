@@ -23,7 +23,7 @@ public class BellmanFordTest {
     public void minCostParentBFCorrectParents(){
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s2n1d-cNeg.csv");
+        Network network = networkReader.getNetwork("1s2n1t-cNeg.csv");
 
         Map<String, String> expected = new HashMap<>();
         expected.put("T", "A");
@@ -36,7 +36,7 @@ public class BellmanFordTest {
     public void minCostParentBFDetectNegativeLoop(){
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
-        Network network = networkReader.getNetwork("1s3n1d-cNegLoop.csv");
+        Network network = networkReader.getNetwork("1s3n1t-cNegLoop.csv");
 
         assertTrue(bellmanFord.compute(network, "S").isEmpty());
     }

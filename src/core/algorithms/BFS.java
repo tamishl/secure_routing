@@ -16,7 +16,7 @@ public class BFS {
         String from;
         while (!queue.isEmpty()){
             from = queue.poll();
-            for (String to : network.getEdges(from).keySet()){
+            for (String to : residual.get(from).keySet()){
                 // Skip if no capacity on edge
                 if (residual.get(from).get(to) == 0){
                     continue;

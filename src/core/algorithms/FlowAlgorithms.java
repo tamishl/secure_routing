@@ -120,8 +120,8 @@ public class FlowAlgorithms {
         int currentFlow;
         double totalCost = 0.0;
 
-        String from;
-        String to;
+        String parent;
+        String child;
         double cost;
 
         List<String> path = pathFinder.path(network, source, sink, residual);
@@ -134,27 +134,27 @@ public class FlowAlgorithms {
             currentFlow = pathBottleneckInt(path, residual);
 
             totalFlow += currentFlow;
-            to = path.getFirst();
+            child = path.getFirst();
 
             // Update residual graph and track cost
             for (int i = 1; i < path.size(); i++){
-                from = path.get(i);
+                parent = path.get(i);
 
                 // If reversed edge: flow in opposite direction than path
-                if (residual.get(to).get(from) != 0){
-                    cost = original.get(to).get(from).cost;
+                if (residual.get(child).get(parent) != 0){
+                    cost = original.get(child).get(parent).cost;
                     totalCost -= cost * currentFlow;
-                    residual.get(to).put(from, residual.get(to).get(from)- currentFlow);
+                    residual.get(child).put(parent, residual.get(child).get(parent)- currentFlow);
                 }
 
                 // If original edge
                 else {
-                    cost = original.get(from).get(to).cost;
+                    cost = original.get(parent).get(child).cost;
                     totalCost += cost * currentFlow;
-                    residual.get(from).put(to, residual.get(from).get(to)-currentFlow);
+                    residual.get(parent).put(child, residual.get(parent).get(child)-currentFlow);
                 }
 
-                to = from;
+                child = parent;
             }
 
             path = pathFinder.path(network, source, sink, residual);

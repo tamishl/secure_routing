@@ -4,7 +4,7 @@ public enum Field {
     ID("id"),
     FROM("from"),
     TO("to"),
-    PROBABILITY("probability"),
+    RISK("risk"),
     CAPACITY("capacity"),
     COST("cost");
 

@@ -68,24 +68,19 @@ public class Network {
         return costMap;
     }
 
-    public Map<String, Map<String, EdgeWeights>> generateCopyMap(){
-        Map<String, Map<String, EdgeWeights>> rNetwork = new HashMap<>();
+    public  Map<String, Double> generateProbabilityMap(String source){
+        Map<String, Double> probabilityMap = new HashMap<>(); // Probability of successfully reaching destination from source node to given node
 
-        String from;
-        String to;
-        EdgeWeights ew;
-
-        for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: outEdges.entrySet()){
-            from = outerEntry.getKey();
-            rNetwork.put(from, new HashMap<>());
-            for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()) {
-                to = innerEntry.getKey();
-                ew = innerEntry.getValue();
-                rNetwork.get(from).put(to, new EdgeWeights(ew.capacity, ew.cost));
+        for (String node : nodes.keySet()) {
+            if (node.equals(source)){
+                probabilityMap.put(node, Math.log(1 - nodes.get(source).risk));
+                continue;
             }
+            // Path probability will be calculated with logarithms so negative infinity
+            probabilityMap.put(node, Double.NEGATIVE_INFINITY);
         }
 
-        return rNetwork;
+        return probabilityMap;
     }
 
     public Map<String, Map<String, Integer>> generateResidualFlowMap(){
@@ -150,9 +145,29 @@ public class Network {
     }
 
 
+    public Map<String, Map<String, EdgeWeights>> generateCopyMap(){
+        Map<String, Map<String, EdgeWeights>> rNetwork = new HashMap<>();
+
+        String from;
+        String to;
+        EdgeWeights ew;
+
+        for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: outEdges.entrySet()){
+            from = outerEntry.getKey();
+            rNetwork.put(from, new HashMap<>());
+            for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()) {
+                to = innerEntry.getKey();
+                ew = innerEntry.getValue();
+                rNetwork.get(from).put(to, new EdgeWeights(ew.capacity, ew.cost));
+            }
+        }
+
+        return rNetwork;
+    }
+
+
     // Getters
     public Node getNode(String str){
-        nodes.get(str);
         return nodes.get(str);
     }
 

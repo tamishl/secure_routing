@@ -17,7 +17,7 @@ public class NetworkReader {
     public double minCost;
     public double maxCost;
 
-    public int probabilityDecimals;
+    public int riskDecimals;
     public double minProbability;
     public double maxProbability;
 
@@ -28,7 +28,7 @@ public class NetworkReader {
         this.costDecimals = builder.costDecimals;
         this.minCost = builder.minCost;
         this.maxCost = builder.maxCost;
-        this.probabilityDecimals = builder.probabilityDecimals;
+        this.riskDecimals = builder.riskDecimals;
         this.minProbability = builder.minProbability;
         this.maxProbability = builder.maxProbability;
     }
@@ -110,15 +110,15 @@ public class NetworkReader {
 
     private void addNode(Map<String, String> valueMap, Network network){
         String id = valueMap.get(Field.ID.getValue());
-        double probability;
+        double risk;
 
-        if (valueMap.containsKey(Field.PROBABILITY.getValue())) {
-            probability = Double.parseDouble(valueMap.get("probability"));
+        if (valueMap.containsKey(Field.RISK.getValue())) {
+            risk = Double.parseDouble(valueMap.get("risk"));
         } else {
-            probability = randNumGenerator.randDouble(minProbability, maxProbability, probabilityDecimals);
+            risk = randNumGenerator.randDouble(minProbability, maxProbability, riskDecimals);
         }
 
-        network.addNodeIfAbsent(id, probability);
+        network.addNodeIfAbsent(id, risk);
     }
 
     private void addEdge(Map<String, String> valueMap, Network network){
@@ -148,8 +148,8 @@ public class NetworkReader {
         String to = valueMap.get(Field.TO.getValue());
 
         // Add nodes to network
-        network.addNodeIfAbsent(from, randNumGenerator.randDouble(minProbability, maxProbability, probabilityDecimals));
-        network.addNodeIfAbsent(to, randNumGenerator.randDouble(minProbability, maxProbability, probabilityDecimals));
+        network.addNodeIfAbsent(from, randNumGenerator.randDouble(minProbability, maxProbability, riskDecimals));
+        network.addNodeIfAbsent(to, randNumGenerator.randDouble(minProbability, maxProbability, riskDecimals));
     }
 
 
@@ -165,7 +165,7 @@ public class NetworkReader {
         private double minCost = 0.1;
         private double maxCost = 3.0;
 
-        private int probabilityDecimals = 2;
+        private int riskDecimals = 2;
         private double minProbability = 0.01;
         private double maxProbability = 0.99;
 
@@ -207,8 +207,8 @@ public class NetworkReader {
         }
 
 
-        public Builder probabilityDecimals(int value) {
-            this.probabilityDecimals = value;
+        public Builder riskDecimals(int value) {
+            this.riskDecimals = value;
             return this;
         }
 

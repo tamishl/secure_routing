@@ -1,10 +1,10 @@
 [NODES]
-id,probability
-S,0.5
-A,0.5
+id,risk
+S,0.1
+A,0.8
 B,0.5
-C,0.5
-T,0.5
+C,0.2
+T,0.2
 
 [EDGES]
 from,to,capacity,cost

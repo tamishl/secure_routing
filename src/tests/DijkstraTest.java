@@ -45,7 +45,6 @@ public class DijkstraTest {
         expected.put("T", "C");
 
         assertEquals(expected, dijkstra.computeDijkstraJohnson(network, "S", "T", network.generateResidualMap(), network.generatePotentials()));
-
     }
 
     @Test
@@ -62,5 +61,21 @@ public class DijkstraTest {
         expected.put("T", "C");
 
         assertEquals(expected, dijkstra.computeDijkstraJohnson(network, "S", "T", network.generateResidualMap(), network.generatePotentials()));
+    }
+
+    @Test
+    public void dijkstraJohnsonProbCorrectMap1() {
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
+
+        Map<String, String> expected = new HashMap<>();
+        expected.put("A", "S");
+        expected.put("B", "S");
+        expected.put("C", "B");
+        expected.put("T", "C");
+
+        assertEquals(expected, dijkstra.computeDijkstraJohnsonProb(network, "S", "T", network.generateResidualMap(), network.generatePotentials()));
+
     }
 }

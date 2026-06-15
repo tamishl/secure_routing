@@ -3,15 +3,15 @@ package core;
 import java.util.Objects;
 
 public class Node {
-    String id;
-    NodeType type;
-    double probability;
+    public String id;
+    public NodeType type;
+    public double risk;
 
 
-    public Node(String id, NodeType type, double probability) {
+    public Node(String id, NodeType type, double risk) {
         this.id = id;
         this.type = type;
-        this.probability = probability;
+        this.risk = risk;
     }
 
     public String toString() {

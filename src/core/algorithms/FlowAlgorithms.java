@@ -165,6 +165,47 @@ public class FlowAlgorithms {
         return cost;
     }
 
+
+    public FlowCost minCostFlow(Network network, String source, String sink){
+        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
+
+        int totalFlow = 0;
+        int currentFlow;
+        double totalCost = 0.0;
+
+        String from;
+        String to;
+        EdgeWeights ew;
+
+        List<String> path = pathFinder.minCostPathFlow(network, source, sink, residual);
+
+        while(!path.isEmpty()) {
+            // Print path (for analysis)
+            System.out.println(path.reversed());
+
+            // Get bottleneck
+            currentFlow = pathBottleneck(path, residual);
+
+            totalFlow += currentFlow;
+            to = path.getFirst();
+
+            // Update residual graph and track probability
+            for (int i = 1; i < path.size(); i++){
+                from = path.get(i);
+                ew = residual.get(from).get(to);
+                totalCost += ew.cost * currentFlow;
+                ew.flow += currentFlow;
+                to = from;
+            }
+
+            path = pathFinder.minCostPathFlow(network, source, sink, residual);
+        }
+
+        return new FlowCost(totalFlow, totalCost);
+    }
+
+
+    // To be removed, but part of hand-in
     // Incorrect: can not handle reversed edges properly
     public FlowCost maxFlowCost(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
@@ -190,7 +231,7 @@ public class FlowAlgorithms {
             totalFlow += currentFlow;
             child = path.getFirst();
 
-            // Update residual graph and track cost
+            // Update residual graph and track probability
             for (int i = 1; i < path.size(); i++){
                 parent = path.get(i);
 
@@ -213,45 +254,6 @@ public class FlowAlgorithms {
 
             path = pathFinder.path(network, source, sink, residual);
         }
-        return new FlowCost(totalFlow, totalCost);
-    }
-
-
-    public FlowCost minCostFlow(Network network, String source, String sink){
-        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
-
-        int totalFlow = 0;
-        int currentFlow;
-        double totalCost = 0.0;
-
-        String from;
-        String to;
-        EdgeWeights ew;
-
-        List<String> path = pathFinder.minCostPathFlow(network, source, sink, residual);
-
-        while(!path.isEmpty()) {
-            // Print path (for analysis)
-            System.out.println(path.reversed());
-
-            // Get bottleneck
-            currentFlow = pathBottleneck(path, residual);
-
-            totalFlow += currentFlow;
-            to = path.getFirst();
-
-            // Update residual graph and track cost
-            for (int i = 1; i < path.size(); i++){
-                from = path.get(i);
-                ew = residual.get(from).get(to);
-                totalCost += ew.cost * currentFlow;
-                ew.flow += currentFlow;
-                to = from;
-            }
-
-            path = pathFinder.minCostPathFlow(network, source, sink, residual);
-        }
-
         return new FlowCost(totalFlow, totalCost);
     }
 

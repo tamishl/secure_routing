@@ -3,6 +3,7 @@ package core.algorithms;
 import core.EdgeWeights;
 import core.Network;
 import core.models.FlowCost;
+import core.models.FlowCostProb;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class FlowAlgorithms {
 
         Map<String, Double> potentials = network.generatePotentials();
 
-        List<String> path = pathFinder.minCostPath(network, source, sink, residual, potentials);
+        List<String> path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
@@ -60,10 +61,71 @@ public class FlowAlgorithms {
                 to = from;
             }
 
-            path = pathFinder.minCostPath(network, source, sink, residual, potentials);
+            path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
         }
 
         return new FlowCost(totalFlow, totalCost);
+    }
+
+    public FlowCostProb maxProbMaxFlow(Network network, String source, String sink){
+        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
+
+        int totalFlow = 0;
+        int currentFlow;
+        double totalProbability = 0.0;
+        double currentProbability;
+        double totalCost = 0.0;
+
+        String parent;
+        String child;
+        EdgeWeights ew;
+
+        List<String> path = pathFinder.minRiskFlowPath(network, source, sink, residual);
+
+        while(!path.isEmpty()) {
+            // Print path (for analysis)
+            System.out.println(path.reversed());
+
+            currentFlow = this.pathBottleneck(path, residual);
+            totalFlow += currentFlow;
+            child = path.getFirst();
+
+            currentProbability = 0.0;
+            // Update residual graph and track cost
+            for (int i = 1; i < path.size(); i++){
+                parent = path.get(i);
+
+                currentProbability += Math.log(1.0-network.getNode(child).risk);
+
+                // If reversed edge: flow in opposite direction than path
+                if (residual.get(child).get(parent).flow != 0){
+                    ew = residual.get(child).get(parent);
+                    totalCost -= ew.cost * currentFlow;
+                    ew.flow -= currentFlow;
+                    // Division since it will be included in next iteration (prevents adding flags and checks)
+                    // Can not be a reversed edge from T so no problem there
+                    currentProbability -= Math.log(1-network.getNode(child).risk) + Math.log(1-network.getNode(parent).risk);
+                }
+
+                // If original edge
+                else {
+                    ew = residual.get(parent).get(child);
+                    ew.flow += currentFlow;
+                    totalCost += ew.cost * currentFlow;
+                }
+
+                child = parent;
+            }
+
+            // Remove already visited nodes from reversed edges
+            // Include risk of S (might be better child have parent, but then it needs a default value)
+            currentProbability += Math.log(1-network.getNode(source).risk);
+            totalProbability += currentFlow*currentProbability;
+
+            path = pathFinder.minRiskFlowPath(network, source, sink, residual);
+        }
+
+        return new FlowCostProb(totalFlow, totalCost, totalProbability);
     }
 
 

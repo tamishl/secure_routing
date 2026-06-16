@@ -66,7 +66,7 @@ public class PathFinderTest {
     }
 
     @Test
-    public void minCostPathDJCorrect1() {
+    public void minCostFlowPathDJCorrect1() {
         Random random = new Random(10);
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s3n1t-full.csv");
@@ -74,7 +74,7 @@ public class PathFinderTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "B", S);
 
-        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(),  network.generatePotentials()));
+        assertEquals(expected, pathFinder.minCostFlowPath(network, S,T, network.generateResidualMap(),  network.generatePotentials()));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class PathFinderTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "D", "B", "A", S);
 
-        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
+        assertEquals(expected, pathFinder.minCostFlowPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
     }
 
     @Test

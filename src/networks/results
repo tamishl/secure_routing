@@ -1,8 +1,9 @@
 file,flow,minCost
-1s3n1d-cf.csv,70,136.0
-1s3n1d-cf-1.csv,150,730
-1s4n1d-cf-1.csv,17,101.0
-1s4n1d-cf-2.csv,17,95.0
-1s4n1d-f6.csv,6,
-1s4n1d-f17.csv,17,
-1s4n1d-f19.csv,19,
+1s3n1t-full.csv,150,730
+1s3n1t-cf.csv,70,136.0
+1s3n1t-cf-1.csv,150,730
+1s4n1t-cf-1.csv,17,101.0
+1s4n1t-cf-2.csv,17,95.0
+1s4n1t-f6.csv,6,
+1s4n1t-f17.csv,17,
+1s4n1t-f19.csv,19,

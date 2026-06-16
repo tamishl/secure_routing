@@ -3,8 +3,10 @@ package core.algorithms;
 import core.Network;
 import core.NodeType;
 import core.models.FlowCost;
+import core.models.FlowCostProb;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
+
 import java.util.Random;
 
 public class Analyzer {
@@ -39,5 +41,14 @@ public class Analyzer {
         result = flowAlgorithms.minCostMaxFlow(network, S, T);
         System.out.println("Flow: " + result.flow);
         System.out.println("Cost: " + result.cost);
+
+        FlowCostProb resultP;
+        System.out.println();
+        System.out.println("MAXIMUM PROBABILITY AND FLOW: maxProbMaxFlow()");
+        System.out.println("Paths:");
+        resultP = flowAlgorithms.maxProbMaxFlow(network, S, T);
+        System.out.println("Flow: " + resultP.flow);
+        System.out.println("Cost: " + resultP.cost);
+        System.out.println("Probability: " + resultP.probability);
     }
 }

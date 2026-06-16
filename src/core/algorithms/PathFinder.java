@@ -30,7 +30,7 @@ public class PathFinder {
 
     // Considering flow
     // Considering reversed edges
-    public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+    public List<String> minCostFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
         return getPath(dijkstra.computeDijkstraJohnson(network, source, sink, residual, potentials), sink);
     }
 

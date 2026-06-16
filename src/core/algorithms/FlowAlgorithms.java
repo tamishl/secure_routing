@@ -28,7 +28,7 @@ public class FlowAlgorithms {
 
         Map<String, Double> potentials = network.generatePotentials();
 
-        List<String> path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
+        List<String> path = pathFinder.minCostPath(network, source, sink, residual, potentials);
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
@@ -60,7 +60,7 @@ public class FlowAlgorithms {
                 to = from;
             }
 
-            path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
+            path = pathFinder.minCostPath(network, source, sink, residual, potentials);
         }
 
         return new FlowCost(totalFlow, totalCost);
@@ -70,7 +70,7 @@ public class FlowAlgorithms {
     // Basic Ford-Fulkerson: maximum possible flow from S to D
     public FlowCost maxFlow(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
-        List<String> path = pathFinder.path(network, source, sink, residual);
+        List<String> path = pathFinder.flowPath(network, source, sink, residual);
 
         int maxFlow = 0;
 
@@ -105,10 +105,10 @@ public class FlowAlgorithms {
                 child = parent;
             }
 
-            path = pathFinder.path(network, source, sink, residual);
+            path = pathFinder.flowPath(network, source, sink, residual);
         }
 
-        double cost = costForFlow(network, residual);
+        double cost = costOfFlow(network, residual);
         return new FlowCost(maxFlow, cost);
     }
 
@@ -145,8 +145,7 @@ public class FlowAlgorithms {
 
 
     // Adapted functions for analysis
-
-    public double costForFlow(Network network, Map<String, Map<String, Integer>> residual){
+    public double costOfFlow(Network network, Map<String, Map<String, Integer>> residual){
         double cost = 0.0;
         String from;
         String to;
@@ -177,7 +176,7 @@ public class FlowAlgorithms {
         String to;
         EdgeWeights ew;
 
-        List<String> path = pathFinder.minCostFlowPath(network, source, sink, residual);
+        List<String> path = pathFinder.minCostPath(network, source, sink, residual);
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
@@ -198,7 +197,7 @@ public class FlowAlgorithms {
                 to = from;
             }
 
-            path = pathFinder.minCostFlowPath(network, source, sink, residual);
+            path = pathFinder.minCostPath(network, source, sink, residual);
         }
 
         return new FlowCost(totalFlow, totalCost);
@@ -219,7 +218,7 @@ public class FlowAlgorithms {
         String child;
         double cost;
 
-        List<String> path = pathFinder.path(network, source, sink, residual);
+        List<String> path = pathFinder.flowPath(network, source, sink, residual);
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
@@ -252,7 +251,7 @@ public class FlowAlgorithms {
                 child = parent;
             }
 
-            path = pathFinder.path(network, source, sink, residual);
+            path = pathFinder.flowPath(network, source, sink, residual);
         }
         return new FlowCost(totalFlow, totalCost);
     }

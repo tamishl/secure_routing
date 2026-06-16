@@ -16,7 +16,7 @@ public class PathFinder {
         this.bfs = bfs;
     }
 
-    // Regular minCostPath, without considering flow
+    // Not considering flow
     public List<String> minCostPath(Network network, String source, String sink, Algorithm algorithm){
         Map<String, String> parents =
                 switch(algorithm) {
@@ -28,24 +28,27 @@ public class PathFinder {
     }
 
 
-
-    public List<String> minCostFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+    // Considering flow
+    // Considering reversed edges
+    public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
         return getPath(dijkstra.computeDijkstraJohnson(network, source, sink, residual, potentials), sink);
-    }
-
-    public List<String> minCostFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
-        return getPath(dijkstra.computeDijkstraFlow(network, source, sink, residual), sink);
     }
 
     public List<String> minRiskFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
         return getPath(dijkstra.computeDijkstraProbability(network, source, sink, residual), sink);
     }
 
-
-    public List<String> path(Network network, String source, String sink, Map<String, Map<String, Integer>> residual){
+    public List<String> flowPath(Network network, String source, String sink, Map<String, Map<String, Integer>> residual){
         return getPath(bfs.compute(network, source, sink, residual), sink);
     }
 
+    // Not considering reversed edges
+    public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
+        return getPath(dijkstra.computeDijkstraFlow(network, source, sink, residual), sink);
+    }
+
+
+    // General pathfinder
     private List<String> getPath(Map<String, String> parents, String sink){
         List<String> path = new ArrayList<>();
 

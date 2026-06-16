@@ -29,7 +29,7 @@ public class PathFinderTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s4n1t-f6.csv");
 
-        assertFalse(pathFinder.path(network,S, T, network.generateResidualFlowMap()).isEmpty());
+        assertFalse(pathFinder.flowPath(network,S, T, network.generateResidualFlowMap()).isEmpty());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class PathFinderTest {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork("1s8n1t-edges-antiparallel.csv");
 
-        assertTrue(pathFinder.path(network,"A", "E", network.generateResidualFlowMap()).isEmpty());
+        assertTrue(pathFinder.flowPath(network,"A", "E", network.generateResidualFlowMap()).isEmpty());
     }
 
     @Test
@@ -74,12 +74,7 @@ public class PathFinderTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "B", S);
 
-        Map<String, Double> potentials = new HashMap<>();
-        for (String node: network.nodes.keySet()){
-            potentials.put(node, 0.0);
-        }
-
-        assertEquals(expected, pathFinder.minCostFlowPath(network, S,T, network.generateResidualMap(), potentials));
+        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(),  network.generatePotentials()));
     }
 
     @Test
@@ -91,7 +86,19 @@ public class PathFinderTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "D", "B", "A", S);
 
-        assertEquals(expected, pathFinder.minCostFlowPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
+        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
+    }
+
+    @Test
+    public void minRiskPathCorrect1() {
+        Random random = new Random(10);
+        NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
+        Network network = networkReader.getNetwork("1s3n1t-full.csv");
+
+        List<String> expected = new ArrayList<>();
+        Collections.addAll(expected, T, "C", "B", S);
+
+        assertEquals(expected, pathFinder.minRiskFlowPath(network, S,T, network.generateResidualMap()));
     }
 
 }

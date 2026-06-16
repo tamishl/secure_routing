@@ -79,7 +79,7 @@ public class PathFinderTest {
             potentials.put(node, 0.0);
         }
 
-        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(), potentials));
+        assertEquals(expected, pathFinder.minCostFlowPath(network, S,T, network.generateResidualMap(), potentials));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class PathFinderTest {
         List<String> expected = new ArrayList<>();
         Collections.addAll(expected, T, "C", "D", "B", "A", S);
 
-        assertEquals(expected, pathFinder.minCostPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
+        assertEquals(expected, pathFinder.minCostFlowPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
     }
 
 }

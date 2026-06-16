@@ -10,45 +10,6 @@ import java.util.*;
 
 public class Dijkstra {
 
-    public Map<String, String> computeDijkstra(Network network, String source) {
-        PriorityQueue<CostToNode> queue = new PriorityQueue<>();
-        Set<String> visited = new HashSet<>();
-
-        // Cost from source node to given node
-        Map<String, Double> costFromSource = network.generateCostMap(source);
-        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from source
-
-        queue.add(new CostToNode(source, 0.0));
-        double cost;
-        String from;
-        String to;
-        EdgeWeights ew;
-
-        while (!queue.isEmpty()) {
-            from = queue.poll().nodeId;
-            visited.add(from);
-
-            // Update total costFromSource if lower cost is found
-            // Save parents to keep track of path
-            for (Map.Entry<String, EdgeWeights> entry : network.getEdges(from).entrySet()) {
-                to = entry.getKey();
-                ew = entry.getValue();
-                cost = ew.cost + costFromSource.get(from);
-                if (cost < costFromSource.get(to)) {
-                    costFromSource.put(to, cost);
-                    parents.put(to, from);
-                }
-                if (!visited.contains(to)) {
-                    queue.add(new CostToNode(to, costFromSource.get(to)));
-                }
-            }
-        }
-        return parents;
-    }
-
-
-
-
     public Map<String, String> computeDijkstraJohnson(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
         PriorityQueue<CostProbability> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
@@ -60,7 +21,7 @@ public class Dijkstra {
         Map<String, String> parents = new HashMap<>();                         // child with parent that has the lowest cost from source
 
         queue.add(new CostProbability(source, 0.0, probabilityFromSource.get(source)));
-        double cost = 0.0;
+        double cost = Double.POSITIVE_INFINITY;
         double probability;
         String from;
         String to;
@@ -127,7 +88,7 @@ public class Dijkstra {
     }
 
 
-    public Map<String, String> computeDijkstraJohnsonProb(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
+    public Map<String, String> computeDijkstraProbability(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges) {
         PriorityQueue<ProbabilityToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -168,10 +129,6 @@ public class Dijkstra {
                 }
 
                 if (canFlow){
-//                    // Epsilon check to handle floating-point precision errors
-//                    if (Math.abs(probability) < 1e-9){
-//                        probability = 0.0;
-//                    }
                     // Using logarithms for numbers [0,1.0] so all values will be 0 or negative
                     // The closer to 0, the higher the probability, so >
                     if (probability > probabilityFromSource.get(to)) {
@@ -187,13 +144,6 @@ public class Dijkstra {
             }
         }
 
-        // Update potentials
-        double potential;
-        for (String nodeId: potentials.keySet()){
-            potential = potentials.get(nodeId) - probabilityFromSource.get(nodeId);
-            potentials.put(nodeId, potential);
-        }
-
         return parents;
     }
 
@@ -207,7 +157,7 @@ public class Dijkstra {
         Map<String, String> parents = new HashMap<>();                         // child, parents that has the lowest probability from source
 
         queue.add(new CostToNode(source, 0.0));
-        double cost = 0.0;
+        double cost;
         String from;
         String to;
         EdgeWeights ew;
@@ -241,7 +191,40 @@ public class Dijkstra {
     }
 
 
-    public boolean dominates(CostProbability cp){
-        return false;
+
+    public Map<String, String> computeDijkstra(Network network, String source) {
+        PriorityQueue<CostToNode> queue = new PriorityQueue<>();
+        Set<String> visited = new HashSet<>();
+
+        // Cost from source node to given node
+        Map<String, Double> costFromSource = network.generateCostMap(source);
+        Map<String, String> parents = new HashMap<>(); // toId, fromId that leads to lowest cost from source
+
+        queue.add(new CostToNode(source, 0.0));
+        double cost;
+        String from;
+        String to;
+        EdgeWeights ew;
+
+        while (!queue.isEmpty()) {
+            from = queue.poll().nodeId;
+            visited.add(from);
+
+            // Update total costFromSource if lower cost is found
+            // Save parents to keep track of path
+            for (Map.Entry<String, EdgeWeights> entry : network.getEdges(from).entrySet()) {
+                to = entry.getKey();
+                ew = entry.getValue();
+                cost = ew.cost + costFromSource.get(from);
+                if (cost < costFromSource.get(to)) {
+                    costFromSource.put(to, cost);
+                    parents.put(to, from);
+                }
+                if (!visited.contains(to)) {
+                    queue.add(new CostToNode(to, costFromSource.get(to)));
+                }
+            }
+        }
+        return parents;
     }
 }

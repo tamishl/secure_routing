@@ -6,7 +6,7 @@ public class Network {
     public HashMap<String, Node> nodes = new HashMap<>();
     
     public Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
-
+    public double maxCost = 0.0;
 
     public void addNodeIfAbsent(String id, double probability, NodeType type) {
         if (!nodes.containsKey(id)) {
@@ -36,6 +36,9 @@ public class Network {
 
     public void insertEdge(String fromId, String toId, int capacity, double cost){
         outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
+        if (cost > maxCost){
+            maxCost = cost;
+        }
     }
 
     public void printGraph(){

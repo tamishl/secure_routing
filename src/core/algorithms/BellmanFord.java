@@ -25,7 +25,7 @@ public class BellmanFord {
         for (int i = 0; i < network.nodes.size(); i++){
             // Prevent futile iterations: stop when no improvement happened in previous cycle.
             if (!changed){
-                return parents;
+                break;
             }
             changed = false;
 

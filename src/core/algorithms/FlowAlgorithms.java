@@ -28,7 +28,7 @@ public class FlowAlgorithms {
 
         Map<String, Double> potentials = network.generatePotentials();
 
-        List<String> path = pathFinder.minCostPath(network, source, sink, residual, potentials);
+        List<String> path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
@@ -60,7 +60,7 @@ public class FlowAlgorithms {
                 to = from;
             }
 
-            path = pathFinder.minCostPath(network, source, sink, residual, potentials);
+            path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
         }
 
         return new FlowCost(totalFlow, totalCost);
@@ -177,7 +177,7 @@ public class FlowAlgorithms {
         String to;
         EdgeWeights ew;
 
-        List<String> path = pathFinder.minCostPathFlow(network, source, sink, residual);
+        List<String> path = pathFinder.minCostFlowPath(network, source, sink, residual);
 
         while(!path.isEmpty()) {
             // Print path (for analysis)
@@ -198,7 +198,7 @@ public class FlowAlgorithms {
                 to = from;
             }
 
-            path = pathFinder.minCostPathFlow(network, source, sink, residual);
+            path = pathFinder.minCostFlowPath(network, source, sink, residual);
         }
 
         return new FlowCost(totalFlow, totalCost);

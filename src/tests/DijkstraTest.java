@@ -75,7 +75,7 @@ public class DijkstraTest {
         expected.put("C", "B");
         expected.put("T", "C");
 
-        assertEquals(expected, dijkstra.computeDijkstraJohnsonProb(network, "S", "T", network.generateResidualMap(), network.generatePotentials()));
+        assertEquals(expected, dijkstra.computeDijkstraProbability(network, "S", "T", network.generateResidualMap()));
 
     }
 }

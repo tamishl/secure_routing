@@ -2,6 +2,7 @@ package core.algorithms;
 
 import core.EdgeAttributes;
 import core.Network;
+import core.models.CostProb;
 import core.models.FlowCost;
 import core.models.FlowCostProb;
 
@@ -31,7 +32,7 @@ public class FlowAlgorithms {
         List<String> path = pathFinder.minCostFlowPath(network, source, sink, residual, potentials);
 
         while (!path.isEmpty()) {
-            updates = pathValues(network, residual, path);
+            updates = update(network, residual, path);
 
             totalFlow += updates.flow;
             totalCost += updates.cost;
@@ -55,7 +56,7 @@ public class FlowAlgorithms {
         List<String> path = pathFinder.minRiskFlowPath(network, source, sink, residual);
 
         while (!path.isEmpty()) {
-            updates = pathValues(network, residual, path);
+            updates = update(network, residual, path);
 
             totalFlow += updates.flow;
             totalCost += updates.cost;
@@ -68,7 +69,7 @@ public class FlowAlgorithms {
     }
 
     // Flow, cost and probability of current path (cost & probability updated to flow)
-    private FlowCostProb pathValues(Network network, Map<String, Map<String, EdgeAttributes>> residual, List<String> path){
+    private FlowCostProb update(Network network, Map<String, Map<String, EdgeAttributes>> residual, List<String> path){
         // Doesn't handle probability correctly yet for reversed edges I think
         // Print path (for analysis)
         System.out.println(path.reversed());
@@ -117,7 +118,7 @@ public class FlowAlgorithms {
 
 
     // Basic Ford-Fulkerson: maximum possible flow from S to D
-    public FlowCost maxFlow(Network network, String source, String sink){
+    public FlowCostProb maxFlow(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
         List<String> path = pathFinder.flowPath(network, source, sink, residual);
 
@@ -157,8 +158,9 @@ public class FlowAlgorithms {
             path = pathFinder.flowPath(network, source, sink, residual);
         }
 
-        double cost = costOfFlow(network, residual);
-        return new FlowCost(maxFlow, cost);
+        CostProb cp = costProbOfFlow(network, residual, source);
+//        double cost = costOfFlow(network, residual);
+        return new FlowCostProb(maxFlow, cp.cost, cp.probability);
     }
 
 
@@ -211,6 +213,44 @@ public class FlowAlgorithms {
         }
 
         return cost;
+    }
+
+
+    // Adapted functions for analysis
+    public CostProb costProbOfFlow(Network network, Map<String, Map<String, Integer>> residual, String source){
+        double totalCost = 0.0;
+        double totalProbability = 0.0;
+
+        String from;
+        String to;
+        int edgeFlow;
+        double edgeProbability;
+        EdgeAttributes edgeAttrs;
+
+
+        for (Map.Entry<String, Map<String, EdgeAttributes>> outer : network.outEdges.entrySet()){
+            from = outer.getKey();
+
+            for (Map.Entry<String, EdgeAttributes> inner: outer.getValue().entrySet()){
+                to = inner.getKey();
+                edgeAttrs = inner.getValue();
+                edgeFlow = edgeAttrs.capacity - residual.get(from).get(to);
+                totalCost += edgeFlow * edgeAttrs.cost;
+
+                // Include source risk in its outgoing edges
+                // Like converting node risk to edge risk (incoming edges)
+                if (from.equals(source)){
+                    edgeProbability = Math.log((1 - network.getNode(from).risk) * (1 - network.getNode(to).risk));
+                }
+
+                else {
+                    edgeProbability = Math.log(1 - network.getNode(to).risk);
+                }
+                totalProbability += edgeProbability * edgeFlow;
+            }
+        }
+
+        return new CostProb(totalCost, totalProbability);
     }
 
 

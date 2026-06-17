@@ -103,7 +103,7 @@ public class PathFinderTest {
     }
 
     @Test
-    public void paretoPathsCorrectPaths(){
+    public void paretoPathsCorrectPaths1(){
         Network network = networkReader.getNetwork("1s4n1t-full-1.csv");
 
         HashSet<List<String>> expected = new HashSet<>();
@@ -117,7 +117,7 @@ public class PathFinderTest {
     }
 
     @Test
-    public void paretoPathsCorrectMultiPath(){
+    public void paretoPathsCorrectCorrectPaths2(){
         Network network = networkReader.getNetwork("1s4n1t-full-2.csv");
 
         HashSet<List<String>> expected = new HashSet<>();

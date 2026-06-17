@@ -1,7 +1,7 @@
 package core.algorithms;
 import core.EdgeAttributes;
 import core.Network;
-import core.models.CostProbability;
+import core.models.CostProbLabel;
 
 import java.util.*;
 
@@ -53,8 +53,8 @@ public class PathFinder {
 //        dijkstra.updatePotentials(network, source, sink, residual, potentials);
 
         HashSet<List<String>> pathsToSink = new HashSet<>();
-        Map<String, HashSet<CostProbability>> paretoPaths =  bellmanFord.computePareto(network, source, sink, residual, potentials);
-        for (CostProbability cp: paretoPaths.get(sink)){
+        Map<String, HashSet<CostProbLabel>> paretoPaths =  bellmanFord.computePareto(network, source, sink, residual, potentials);
+        for (CostProbLabel cp: paretoPaths.get(sink)){
             pathsToSink.add(cp.path);
         }
 

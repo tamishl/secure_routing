@@ -1,39 +1,27 @@
 package core.models;
 
-import core.Node;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CostProbability {
+public class CostProbLabel {
     public double cost;
     public double probability;
     public List<String> path = new ArrayList<>();
 
 
-    public CostProbability(double totalCost, double totalProbability, List<String> path){
+    public CostProbLabel(double totalCost, double totalProbability, List<String> path){
         this.cost = totalCost;
         this.probability = totalProbability;
         this.path = path;
     }
-
-
-    public boolean dominated(CostProbability other){
-        boolean betterOrEqual = this.cost <= other.cost && this.probability >= other.probability;
-        boolean dominating = this.cost < other.cost || this.probability > other.probability;
-
-        return betterOrEqual && dominating;
-
-    }
-
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;        //Direct comparison of hashCode
         if (object == null || getClass() != object.getClass()) return false;
 
-        CostProbability cp = (CostProbability) object;
+        CostProbLabel cp = (CostProbLabel) object;
         return Objects.equals(path, cp.path);       //Comparison of values
     }
 

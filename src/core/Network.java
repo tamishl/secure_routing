@@ -1,6 +1,6 @@
 package core;
 
-import core.models.CostProbability;
+import core.models.CostProbLabel;
 
 import java.util.*;
 
@@ -88,8 +88,8 @@ public class Network {
         return probabilityMap;
     }
 
-    public  Map<String, HashSet<CostProbability>> generateCostProbMap(String source) {
-        Map<String, HashSet<CostProbability>> costProbMap = new HashMap<>(); // Probability of successfully reaching destination from source node to given node
+    public  Map<String, HashSet<CostProbLabel>> generateCostProbMap(String source) {
+        Map<String, HashSet<CostProbLabel>> costProbMap = new HashMap<>(); // Probability of successfully reaching destination from source node to given node
 
         for (String node : nodes.keySet()) {
             costProbMap.put(node, new HashSet<>());
@@ -97,7 +97,7 @@ public class Network {
             if (node.equals(source)) {
                 List<String> path = new ArrayList<>();
                 path.add("S");
-                costProbMap.get(source).add(new CostProbability(0.0, Math.log(1 - nodes.get(source).risk), path));
+                costProbMap.get(source).add(new CostProbLabel(0.0, Math.log(1 - nodes.get(source).risk), path));
             }
         }
         return costProbMap;

@@ -25,9 +25,10 @@ public class Analyzer {
 
         System.out.println("MAXIMUM FLOW AND COST: maxFlow()");
         System.out.println("Paths:");
-        resultFC = flowAlgorithms.maxFlow(network, S, T);
-        System.out.println("Flow: " + resultFC.flow);
-        System.out.println("Cost: " + resultFC.cost);
+        resultFCP = flowAlgorithms.maxFlow(network, S, T);
+        System.out.println("Flow: " + resultFCP.flow);
+        System.out.println("Cost: " + resultFCP.cost);
+        System.out.println("Probability: " + resultFCP.probability);
 
         System.out.println();
         System.out.println("MINIMUM COST AND FLOW: minCostFlow()");

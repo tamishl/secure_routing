@@ -50,10 +50,10 @@ public class PathFinder {
 
     // Pareto optimalty
     public HashSet<List<String>> paretoPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
-        dijkstra.updatePotentials(network, source, sink, residual, potentials);
+//        dijkstra.updatePotentials(network, source, sink, residual, potentials);
 
         HashSet<List<String>> pathsToSink = new HashSet<>();
-        Map<String, HashSet<CostProbability>> paretoPaths =  bellmanFord.computeCostRisk(network, source, residual, potentials);
+        Map<String, HashSet<CostProbability>> paretoPaths =  bellmanFord.computePareto(network, source, sink, residual, potentials);
         for (CostProbability cp: paretoPaths.get(sink)){
             pathsToSink.add(cp.path);
         }

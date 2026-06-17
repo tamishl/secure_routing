@@ -103,30 +103,28 @@ public class PathFinderTest {
     }
 
     @Test
-    public void paretoPathsCorrectAllPaths(){
-        Network network = networkReader.getNetwork("1s4n1t-full-allPareto.csv");
+    public void paretoPathsCorrectPaths(){
+        Network network = networkReader.getNetwork("1s4n1t-full-1.csv");
 
         HashSet<List<String>> expected = new HashSet<>();
-        expected.add(List.of(S, "B", "D", T));
-        expected.add(List.of(S, "A", "B", "D", T));
-        expected.add(List.of(S, "A", "B", "D", "C", T));
-        expected.add(List.of(S, "A", "C", T));
-        expected.add(List.of(S, "A", "D", T));
         expected.add(List.of(S, "A", "D", "C", T));
+        expected.add(List.of(S, "A", "B", "D", "C", T));
+        expected.add(List.of(S, "B", "D", T));
+        expected.add(List.of(S, "B", "D", "C", T));
 
         assertEquals(expected, pathFinder.paretoPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
 
     }
 
     @Test
-    public void paretoPathsCorrectMultiPaths(){
-        Network network = networkReader.getNetwork("1s4n1t-full.csv");
+    public void paretoPathsCorrectMultiPath(){
+        Network network = networkReader.getNetwork("1s4n1t-full-2.csv");
 
         HashSet<List<String>> expected = new HashSet<>();
-        expected.add(List.of(S, "B", "D", T));
-        expected.add(List.of(S, "A", "B", "D", T));
-        expected.add(List.of(S, "A", "B", "D", "C", T));
         expected.add(List.of(S, "A", "C", T));
+        expected.add(List.of(S, "A", "D", T));
+        expected.add(List.of(S, "A", "B", "D", T));
+        expected.add(List.of(S, "B", "D", T));
 
         assertEquals(expected, pathFinder.paretoPath(network, S,T, network.generateResidualMap(), network.generatePotentials()));
 

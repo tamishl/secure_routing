@@ -8,13 +8,8 @@ import core.Network;
 import core.models.CostProbability;
 
 public class BellmanFord {
-//    Dijkstra dijkstra;
-//
-//    public BellmanFord(Dijkstra dijkstra){
-//        this.dijkstra = dijkstra;
-//    }
 
-    public Map<String, HashSet<CostProbability>> computeCostRisk(Network network, String source, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials){
+    public Map<String, HashSet<CostProbability>> computePareto(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials){
         // Cost and probability from source node to given node
         Map<String, HashSet<CostProbability>> paretoPaths = network.generateCostProbMap(source);
 
@@ -36,6 +31,9 @@ public class BellmanFord {
 
             for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: edges.entrySet()){
                 from = outerEntry.getKey();
+                if (from.equals(sink)){
+                    continue;
+                }
                 for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()){
                     to = innerEntry.getKey();
                     ew = innerEntry.getValue();
@@ -59,7 +57,7 @@ public class BellmanFord {
                                 probability += Math.log(1-network.getNode(to).risk);
                             }
 
-                            addIfPareto(paretoPaths.get(to), cp.path, to, cost, probability);
+                            updateParetoPaths(paretoPaths.get(to), cp.path, to, cost, probability);
                         }
                     }
                 }
@@ -69,16 +67,33 @@ public class BellmanFord {
        return paretoPaths;
     }
 
-    private void addIfPareto(HashSet<CostProbability> nodePaths, List<String> predecessors, String nodeId, double cost, double probability){
+    private void updateParetoPaths(HashSet<CostProbability> nodePaths, List<String> predecessors, String nodeId, double cost, double probability){
         boolean isPareto = true;
+
+        List<String> path = new ArrayList<>(predecessors);
+        path.add(nodeId);
 
         if (!nodePaths.isEmpty()) {
             isPareto = false;
             HashSet<CostProbability> dominated = new HashSet<>();
 
             for (CostProbability cp : nodePaths) {
+                // Path is dominated by already existing path: at least one objective is worse and none is better
+                if ((cost > cp.cost || probability < cp.probability) && (cost >= cp.cost && probability <= cp.probability)) {
+                        isPareto = false;
+                        break;
+                }
+
+                // Same values as other path
+                // Can end loop because if a path with the same values is added, it is not dominated
+                else if (cost == cp.cost && probability == cp.probability) {
+                    // Don't add if it's the same path
+                    isPareto = !path.equals(cp.path);
+                    break;
+                }
+
                 // At least one objective is better
-                if (cost < cp.cost || probability > cp.probability) {
+                else if (cost < cp.cost || probability > cp.probability) {
                     isPareto = true;
 
                     // No objective is worse
@@ -95,8 +110,6 @@ public class BellmanFord {
         }
 
         if (isPareto){
-            List<String> path = new ArrayList<>(predecessors);
-            path.add(nodeId);
             nodePaths.add(new CostProbability(cost, probability, path));
         }
     }

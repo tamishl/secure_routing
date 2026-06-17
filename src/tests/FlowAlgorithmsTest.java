@@ -1,7 +1,6 @@
 import core.Network;
 import core.NodeType;
 import core.algorithms.*;
-import core.models.FlowCost;
 import core.models.FlowCostProb;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
@@ -70,36 +69,36 @@ public class FlowAlgorithmsTest {
     @Test
     public void minCostMaxFlowCorrect1(){
         Network network = networkReader.getNetwork("1s3n1t-cf.csv");
-        FlowCost result = flowAlgorithms.minCostMaxFlow(network,S, T);
-        assertEquals(70, result.flow);
-        assertEquals(136.0, result.cost);
+        FlowCostProb expected = flowAlgorithms.minCostMaxFlow(network,S, T);
+        assertEquals(70, expected.flow);
+        assertEquals(136.0, expected.cost);
     }
 
     @Test
     public void minCostMaxFlowCorrect2(){
         Network network = networkReader.getNetwork("1s4n1t-cf-1.csv");
-        FlowCost result = flowAlgorithms.minCostMaxFlow(network,S, T);
-        assertEquals(17, result.flow);
-        assertEquals(101.0, result.cost);
+        FlowCostProb expected = flowAlgorithms.minCostMaxFlow(network,S, T);
+        assertEquals(17, expected.flow);
+        assertEquals(101.0, expected.cost);
     }
 
     @Test
     public void minCostMaxFlowCorrect3(){
         Network network = networkReader.getNetwork("1s4n1t-cf-2.csv");
-        FlowCost result = flowAlgorithms.minCostMaxFlow(network,S, T);
+        FlowCostProb expected = flowAlgorithms.minCostMaxFlow(network,S, T);
 
-        assertEquals(17, result.flow);
-        assertEquals(95.0, result.cost);
+        assertEquals(17, expected.flow);
+        assertEquals(95.0, expected.cost);
     }
 
     // https://www.desmos.com/scientific?lang=en
     @Test
     public void maxProbMaxFlowCorrect(){
         Network network = networkReader.getNetwork("1s3n1t-full.csv");
-        FlowCostProb result = flowAlgorithms.maxProbMaxFlow(network,S, T);
+        FlowCostProb expected = flowAlgorithms.maxProbMaxFlow(network,S, T);
 
-        assertEquals(150, result.flow);
-        assertEquals(170, result.cost);
-        assertTrue(Math.abs(-256.0339378-result.probability)< 1e-7);
+        assertEquals(150, expected.flow);
+        assertEquals(170, expected.cost);
+        assertTrue(Math.abs(-256.0339378- expected.probability)< 1e-7);
     }
 }

@@ -15,12 +15,12 @@ public class Main{
 //        files.add("1s3n1t-cf-1.csv");
 
         // Graphs with fully known result:
-//        files.add("1s3n1t-full.csv");
+        files.add("1s3n1t-full.csv");
 
         // Graphs with partial known result
 //        files.add("1s3n1t-cf.csv");
 //        files.add("1s4n1t-cf-1.csv");
-        files.add("1s4n1t-cf-2.csv");
+//        files.add("1s4n1t-cf-2.csv");
 //        files.add("1s4n1t-f17.csv");
 //        files.add("1s4n1t-f6.csv");
 //        files.add("1s4n1t-f19.csv");

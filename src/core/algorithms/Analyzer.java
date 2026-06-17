@@ -19,36 +19,37 @@ public class Analyzer {
         NetworkReader networkReader = new NetworkReader.Builder(new RandomNumberGenerator(random)).build();
         Network network = networkReader.getNetwork(file);
 
-        FlowCost result;
+        FlowCost resultFC;
+        FlowCostProb resultFCP;
 
 
         System.out.println("MAXIMUM FLOW AND COST: maxFlow()");
         System.out.println("Paths:");
-        result = flowAlgorithms.maxFlow(network, S, T);
-        System.out.println("Flow: " + result.flow);
-        System.out.println("Cost: " + result.cost);
+        resultFC = flowAlgorithms.maxFlow(network, S, T);
+        System.out.println("Flow: " + resultFC.flow);
+        System.out.println("Cost: " + resultFC.cost);
 
         System.out.println();
         System.out.println("MINIMUM COST AND FLOW: minCostFlow()");
         System.out.println("Paths:");
-        result = flowAlgorithms.minCostFlow(network, S, T);
-        System.out.println("Flow: " + result.flow);
-        System.out.println("Cost: " + result.cost);
+        resultFC = flowAlgorithms.minCostFlow(network, S, T);
+        System.out.println("Flow: " + resultFC.flow);
+        System.out.println("Cost: " + resultFC.cost);
 
         System.out.println();
         System.out.println("MINIMUM COST AND MAXIMUM FLOW: minCostMaxFlow()");
         System.out.println("Paths:");
-        result = flowAlgorithms.minCostMaxFlow(network, S, T);
-        System.out.println("Flow: " + result.flow);
-        System.out.println("Cost: " + result.cost);
+        resultFCP = flowAlgorithms.minCostMaxFlow(network, S, T);
+        System.out.println("Flow: " + resultFCP.flow);
+        System.out.println("Cost: " + resultFCP.cost);
+        System.out.println("Probability: " + resultFCP.probability);
 
-        FlowCostProb resultP;
         System.out.println();
         System.out.println("MAXIMUM PROBABILITY AND FLOW: maxProbMaxFlow()");
         System.out.println("Paths:");
-        resultP = flowAlgorithms.maxProbMaxFlow(network, S, T);
-        System.out.println("Flow: " + resultP.flow);
-        System.out.println("Cost: " + resultP.cost);
-        System.out.println("Probability: " + resultP.probability);
+        resultFCP = flowAlgorithms.maxProbMaxFlow(network, S, T);
+        System.out.println("Flow: " + resultFCP.flow);
+        System.out.println("Cost: " + resultFCP.cost);
+        System.out.println("Probability: " + resultFCP.probability);
     }
 }

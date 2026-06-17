@@ -1,23 +1,23 @@
 package core.models;
 
-public class CostProbability implements Comparable<CostProbability> {
-    public String nodeId;
+import core.Node;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class CostProbability {
     public double cost;
     public double probability;
+    public List<String> path = new ArrayList<>();
 
 
-    public CostProbability(String nodeId, double totalCost, double totalProbability){
-        this.nodeId = nodeId;
+    public CostProbability(double totalCost, double totalProbability, List<String> path){
         this.cost = totalCost;
         this.probability = totalProbability;
+        this.path = path;
     }
 
-    // has to be updated to include prob
-    // Comparison method for priority queue
-    public int compareTo(CostProbability other)
-    {
-        return Double.compare(this.cost, other.cost);
-    }
 
     public boolean dominated(CostProbability other){
         boolean betterOrEqual = this.cost <= other.cost && this.probability >= other.probability;
@@ -25,6 +25,22 @@ public class CostProbability implements Comparable<CostProbability> {
 
         return betterOrEqual && dominating;
 
+    }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;        //Direct comparison of hashCode
+        if (object == null || getClass() != object.getClass()) return false;
+
+        CostProbability cp = (CostProbability) object;
+        return Objects.equals(path, cp.path);       //Comparison of values
+    }
+
+    @Override
+    public int hashCode() {
+        //Create hashCode based on all values (in this case only the name of the vertex)
+        return Objects.hashCode(path);
     }
 }
 

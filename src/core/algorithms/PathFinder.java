@@ -1,6 +1,7 @@
 package core.algorithms;
 import core.EdgeWeights;
 import core.Network;
+import core.models.CostProbability;
 
 import java.util.*;
 
@@ -45,6 +46,19 @@ public class PathFinder {
     // Not considering reversed edges
     public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
         return getPath(dijkstra.computeDijkstraFlow(network, source, sink, residual), sink);
+    }
+
+    // Pareto optimalty
+    public HashSet<List<String>> paretoPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+        dijkstra.updatePotentials(network, source, sink, residual, potentials);
+
+        HashSet<List<String>> pathsToSink = new HashSet<>();
+        Map<String, HashSet<CostProbability>> paretoPaths =  bellmanFord.computeCostRisk(network, source, residual, potentials);
+        for (CostProbability cp: paretoPaths.get(sink)){
+            pathsToSink.add(cp.path);
+        }
+
+        return pathsToSink;
     }
 
 

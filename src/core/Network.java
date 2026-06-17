@@ -1,5 +1,7 @@
 package core;
 
+import core.models.CostProbability;
+
 import java.util.*;
 
 public class Network {
@@ -65,7 +67,7 @@ public class Network {
                 costMap.put(node, 0.0);
                 continue;
             }
-            costMap.put(node, Double.MAX_VALUE);
+            costMap.put(node, Double.POSITIVE_INFINITY);
         }
 
         return costMap;
@@ -84,6 +86,21 @@ public class Network {
         }
 
         return probabilityMap;
+    }
+
+    public  Map<String, HashSet<CostProbability>> generateCostProbMap(String source) {
+        Map<String, HashSet<CostProbability>> costProbMap = new HashMap<>(); // Probability of successfully reaching destination from source node to given node
+
+        for (String node : nodes.keySet()) {
+            costProbMap.put(node, new HashSet<>());
+
+            if (node.equals(source)) {
+                List<String> path = new ArrayList<>();
+                path.add("S");
+                costProbMap.get(source).add(new CostProbability(0.0, Math.log(1 - nodes.get(source).risk), path));
+            }
+        }
+        return costProbMap;
     }
 
     public Map<String, Map<String, Integer>> generateResidualFlowMap(){

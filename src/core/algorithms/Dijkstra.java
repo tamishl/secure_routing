@@ -1,6 +1,6 @@
 package core.algorithms;
 
-import core.EdgeWeights;
+import core.EdgeAttributes;
 import core.Network;
 import core.models.CostToNode;
 import core.models.ProbabilityToNode;
@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Dijkstra {
 
-    public Map<String, String> computeDijkstraJohnson(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
+    public Map<String, String> computeDijkstraJohnson(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> edges, Map<String, Double> potentials) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -22,7 +22,7 @@ public class Dijkstra {
         double cost = Double.POSITIVE_INFINITY;
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         boolean canFlow = false;
 
@@ -32,9 +32,9 @@ public class Dijkstra {
 
             // Update total costFromSource if lower cost is found
             // Save parents to keep track of path
-            for (Map.Entry<String, EdgeWeights> edge : edges.get(from).entrySet()) {
+            for (Map.Entry<String, EdgeAttributes> edge : edges.get(from).entrySet()) {
                 to = edge.getKey();
-                ew = edge.getValue();
+                edgeAttrs = edge.getValue();
 
                 // If flow is left or can be cancelled
                 // Check if previous flow to current node can be undone
@@ -44,8 +44,8 @@ public class Dijkstra {
                 }
 
                 // Check if can flow over original edge
-                else if (ew.flow < ew.capacity){
-                    cost = costFromSource.get(from) + ew.cost + potentials.get(from) - potentials.get(to);
+                else if (edgeAttrs.flow < edgeAttrs.capacity){
+                    cost = costFromSource.get(from) + edgeAttrs.cost + potentials.get(from) - potentials.get(to);
                     canFlow = true;
                 }
 
@@ -78,7 +78,7 @@ public class Dijkstra {
     }
 
 
-    public Map<String, String> computeDijkstraProbability(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges) {
+    public Map<String, String> computeDijkstraProbability(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> edges) {
         PriorityQueue<ProbabilityToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -90,7 +90,7 @@ public class Dijkstra {
         double probability;
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         boolean canFlow = false;
 
@@ -99,9 +99,9 @@ public class Dijkstra {
             visited.add(from);
             // Update total probabilityFromSource if higher probability is found
             // Save parents to keep track of path
-            for (Map.Entry<String, EdgeWeights> edge : edges.get(from).entrySet()) {
+            for (Map.Entry<String, EdgeAttributes> edge : edges.get(from).entrySet()) {
                 to = edge.getKey();
-                ew = edge.getValue();
+                edgeAttrs = edge.getValue();
                 probability = probabilityFromSource.get(from);
 
                 // If flow is left or can be undone, calculate probability (Johnson reweighting)
@@ -114,7 +114,7 @@ public class Dijkstra {
                     canFlow = true;
                 }
                 // Check if can flow over original edge
-                else if (ew.flow < ew.capacity){
+                else if (edgeAttrs.flow < edgeAttrs.capacity){
                     probability += Math.log(1-network.getNode(to).risk);
                     canFlow = true;
                 }
@@ -140,7 +140,7 @@ public class Dijkstra {
 
 
     // For analysis
-    public Map<String, String> computeDijkstraFlow(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges) {
+    public Map<String, String> computeDijkstraFlow(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> edges) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -151,7 +151,7 @@ public class Dijkstra {
         double cost;
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         while (!queue.isEmpty()) {
             from = queue.poll().nodeId;
@@ -159,13 +159,13 @@ public class Dijkstra {
 
             // Update total costFromSource if lower probability is found
             // Save parents to keep track of path
-            for (Map.Entry<String, EdgeWeights> edge : edges.get(from).entrySet()) {
+            for (Map.Entry<String, EdgeAttributes> edge : edges.get(from).entrySet()) {
                 to = edge.getKey();
-                ew = edge.getValue();
+                edgeAttrs = edge.getValue();
 
                 // Check if can flow over edge
-                if (ew.flow < ew.capacity){
-                    cost = costFromSource.get(from) + ew.cost;
+                if (edgeAttrs.flow < edgeAttrs.capacity){
+                    cost = costFromSource.get(from) + edgeAttrs.cost;
 
                     if (cost < costFromSource.get(to)) {
                         costFromSource.put(to, cost);
@@ -182,7 +182,7 @@ public class Dijkstra {
     }
 
 
-    public void updatePotentials(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials) {
+    public void updatePotentials(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> edges, Map<String, Double> potentials) {
         PriorityQueue<CostToNode> queue = new PriorityQueue<>();
         Set<String> visited = new HashSet<>();
 
@@ -193,7 +193,7 @@ public class Dijkstra {
         double cost = Double.POSITIVE_INFINITY;
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         boolean canFlow = false;
 
@@ -203,9 +203,9 @@ public class Dijkstra {
 
             // Update total costFromSource if lower cost is found
             // Save parents to keep track of path
-            for (Map.Entry<String, EdgeWeights> edge : edges.get(from).entrySet()) {
+            for (Map.Entry<String, EdgeAttributes> edge : edges.get(from).entrySet()) {
                 to = edge.getKey();
-                ew = edge.getValue();
+                edgeAttrs = edge.getValue();
 
                 // If flow is left or can be undone, calculate probability (Johnson reweighting)
                 // Check if previous flow to current node can be undone
@@ -215,8 +215,8 @@ public class Dijkstra {
                 }
 
                 // Check if can flow over original edge
-                else if (ew.flow < ew.capacity){
-                    cost = costFromSource.get(from) + ew.cost + potentials.get(from) - potentials.get(to);
+                else if (edgeAttrs.flow < edgeAttrs.capacity){
+                    cost = costFromSource.get(from) + edgeAttrs.cost + potentials.get(from) - potentials.get(to);
                     canFlow = true;
                 }
 
@@ -258,7 +258,7 @@ public class Dijkstra {
         double cost;
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         while (!queue.isEmpty()) {
             from = queue.poll().nodeId;
@@ -266,10 +266,10 @@ public class Dijkstra {
 
             // Update total costFromSource if lower cost is found
             // Save parents to keep track of path
-            for (Map.Entry<String, EdgeWeights> entry : network.getEdges(from).entrySet()) {
+            for (Map.Entry<String, EdgeAttributes> entry : network.getEdges(from).entrySet()) {
                 to = entry.getKey();
-                ew = entry.getValue();
-                cost = ew.cost + costFromSource.get(from);
+                edgeAttrs = entry.getValue();
+                cost = edgeAttrs.cost + costFromSource.get(from);
                 if (cost < costFromSource.get(to)) {
                     costFromSource.put(to, cost);
                     parents.put(to, from);

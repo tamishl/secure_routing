@@ -1,6 +1,6 @@
 package core.algorithms;
 
-import core.EdgeWeights;
+import core.EdgeAttributes;
 import core.Network;
 import core.models.FlowCost;
 import core.models.FlowCostProb;
@@ -17,7 +17,7 @@ public class FlowAlgorithms {
 
 
     public FlowCostProb minCostMaxFlow(Network network, String source, String sink) {
-        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
+        Map<String, Map<String, EdgeAttributes>> residual = network.generateResidualMap();
 
         int totalFlow = 0;
         double totalCost = 0.0;
@@ -43,7 +43,7 @@ public class FlowAlgorithms {
     }
 
     public FlowCostProb maxProbMaxFlow(Network network, String source, String sink) {
-        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
+        Map<String, Map<String, EdgeAttributes>> residual = network.generateResidualMap();
 
         int totalFlow = 0;
         double totalCost = 0.0;
@@ -68,14 +68,14 @@ public class FlowAlgorithms {
     }
 
     // Flow, cost and probability of current path (cost & probability updated to flow)
-    private FlowCostProb pathValues(Network network, Map<String, Map<String, EdgeWeights>> residual, List<String> path){
+    private FlowCostProb pathValues(Network network, Map<String, Map<String, EdgeAttributes>> residual, List<String> path){
         // Doesn't handle probability correctly yet for reversed edges I think
         // Print path (for analysis)
         System.out.println(path.reversed());
 
         String parent;
         String child;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         int currentFlow = pathBottleneck(path, residual);
         double currentCost = 0.0;
@@ -90,18 +90,18 @@ public class FlowAlgorithms {
 
             // If reversed edge: flow in opposite direction than path
             if (residual.get(child).get(parent).flow != 0) {
-                ew = residual.get(child).get(parent);
-                currentCost -= ew.cost * currentFlow;
-                ew.flow -= currentFlow;
+                edgeAttrs = residual.get(child).get(parent);
+                currentCost -= edgeAttrs.cost * currentFlow;
+                edgeAttrs.flow -= currentFlow;
 
                 currentProbability -= Math.log(1 - network.getNode(child).risk) + Math.log(1 - network.getNode(parent).risk);
             }
 
             // If original edge
             else {
-                ew = residual.get(parent).get(child);
-                ew.flow += currentFlow;
-                currentCost += ew.cost * currentFlow;
+                edgeAttrs = residual.get(parent).get(child);
+                edgeAttrs.flow += currentFlow;
+                currentCost += edgeAttrs.cost * currentFlow;
             }
 
             child = parent;
@@ -164,7 +164,7 @@ public class FlowAlgorithms {
 
 
     // Maximum flow in the cheapest path
-    public int pathBottleneck(List<String> path, Map<String, Map<String, EdgeWeights>> residual){
+    public int pathBottleneck(List<String> path, Map<String, Map<String, EdgeAttributes>> residual){
         String to = path.getFirst();
         String from;
         int flowRest;
@@ -198,15 +198,15 @@ public class FlowAlgorithms {
         double cost = 0.0;
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
-        for (Map.Entry<String, Map<String, EdgeWeights>> outer : network.outEdges.entrySet()){
+        for (Map.Entry<String, Map<String, EdgeAttributes>> outer : network.outEdges.entrySet()){
             from = outer.getKey();
 
-            for (Map.Entry<String, EdgeWeights> inner: outer.getValue().entrySet()){
+            for (Map.Entry<String, EdgeAttributes> inner: outer.getValue().entrySet()){
                 to = inner.getKey();
-                ew = inner.getValue();
-                cost += (ew.capacity - residual.get(from).get(to)) * ew.cost;
+                edgeAttrs = inner.getValue();
+                cost += (edgeAttrs.capacity - residual.get(from).get(to)) * edgeAttrs.cost;
             }
         }
 
@@ -215,7 +215,7 @@ public class FlowAlgorithms {
 
 
     public FlowCost minCostFlow(Network network, String source, String sink){
-        Map<String, Map<String, EdgeWeights>> residual = network.generateResidualMap();
+        Map<String, Map<String, EdgeAttributes>> residual = network.generateResidualMap();
 
         int totalFlow = 0;
         int currentFlow;
@@ -223,7 +223,7 @@ public class FlowAlgorithms {
 
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
 
         List<String> path = pathFinder.minCostPath(network, source, sink, residual);
 
@@ -240,9 +240,9 @@ public class FlowAlgorithms {
             // Update residual graph and track probability
             for (int i = 1; i < path.size(); i++){
                 from = path.get(i);
-                ew = residual.get(from).get(to);
-                totalCost += ew.cost * currentFlow;
-                ew.flow += currentFlow;
+                edgeAttrs = residual.get(from).get(to);
+                totalCost += edgeAttrs.cost * currentFlow;
+                edgeAttrs.flow += currentFlow;
                 to = from;
             }
 
@@ -257,7 +257,7 @@ public class FlowAlgorithms {
     // Incorrect: can not handle reversed edges properly
     public FlowCost maxFlowCost(Network network, String source, String sink){
         Map<String, Map<String, Integer>> residual = network.generateResidualFlowMap();
-        Map<String, Map<String, EdgeWeights>> original = network.generateResidualMap();
+        Map<String, Map<String, EdgeAttributes>> original = network.generateResidualMap();
 
         int totalFlow = 0;
         int currentFlow;

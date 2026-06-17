@@ -1,5 +1,5 @@
 package core.algorithms;
-import core.EdgeWeights;
+import core.EdgeAttributes;
 import core.Network;
 import core.models.CostProbability;
 
@@ -31,11 +31,11 @@ public class PathFinder {
 
     // Considering flow
     // Considering reversed edges
-    public List<String> minCostFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+    public List<String> minCostFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> residual, Map<String, Double> potentials){
         return getPath(dijkstra.computeDijkstraJohnson(network, source, sink, residual, potentials), sink);
     }
 
-    public List<String> minRiskFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
+    public List<String> minRiskFlowPath(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> residual){
         return getPath(dijkstra.computeDijkstraProbability(network, source, sink, residual), sink);
     }
 
@@ -44,12 +44,12 @@ public class PathFinder {
     }
 
     // Not considering reversed edges
-    public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual){
+    public List<String> minCostPath(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> residual){
         return getPath(dijkstra.computeDijkstraFlow(network, source, sink, residual), sink);
     }
 
     // Pareto optimalty
-    public HashSet<List<String>> paretoPath(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> residual, Map<String, Double> potentials){
+    public HashSet<List<String>> paretoPath(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> residual, Map<String, Double> potentials){
 //        dijkstra.updatePotentials(network, source, sink, residual, potentials);
 
         HashSet<List<String>> pathsToSink = new HashSet<>();

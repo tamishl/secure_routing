@@ -1,6 +1,6 @@
 package core.algorithms;
 
-import core.EdgeWeights;
+import core.EdgeAttributes;
 
 import java.util.*;
 
@@ -9,13 +9,13 @@ import core.models.CostProbability;
 
 public class BellmanFord {
 
-    public Map<String, HashSet<CostProbability>> computePareto(Network network, String source, String sink, Map<String, Map<String, EdgeWeights>> edges, Map<String, Double> potentials){
+    public Map<String, HashSet<CostProbability>> computePareto(Network network, String source, String sink, Map<String, Map<String, EdgeAttributes>> edges, Map<String, Double> potentials){
         // Cost and probability from source node to given node
         Map<String, HashSet<CostProbability>> paretoPaths = network.generateCostProbMap(source);
 
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes edgeAttrs;
         double cost = Double.POSITIVE_INFINITY;
         double probability;
 
@@ -29,17 +29,17 @@ public class BellmanFord {
             }
             changed = false;
 
-            for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: edges.entrySet()){
+            for(Map.Entry<String, Map<String, EdgeAttributes>> outerEntry: edges.entrySet()){
                 from = outerEntry.getKey();
                 if (from.equals(sink)){
                     continue;
                 }
-                for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()){
+                for (Map.Entry<String, EdgeAttributes> innerEntry: outerEntry.getValue().entrySet()){
                     to = innerEntry.getKey();
-                    ew = innerEntry.getValue();
+                    edgeAttrs = innerEntry.getValue();
 
                     // Only loop if flow is possible
-                    if (ew.flow < ew.capacity || edges.get(to).get(from).flow != 0){
+                    if (edgeAttrs.flow < edgeAttrs.capacity || edges.get(to).get(from).flow != 0){
                         changed = true;
                         for (CostProbability cp: paretoPaths.get(from)){
                             // If flow is left or can be undone, calculate probability (Johnson reweighting)
@@ -52,11 +52,10 @@ public class BellmanFord {
                             }
 
                             // Check if can flow over original edge
-                            else if (ew.flow < ew.capacity){
-                                cost = cp.cost + ew.cost + potentials.get(from) - potentials.get(to);
+                            else if (edgeAttrs.flow < edgeAttrs.capacity){
+                                cost = cp.cost + edgeAttrs.cost + potentials.get(from) - potentials.get(to);
                                 probability += Math.log(1-network.getNode(to).risk);
                             }
-
                             updateParetoPaths(paretoPaths.get(to), cp.path, to, cost, probability);
                         }
                     }
@@ -136,9 +135,9 @@ public class BellmanFord {
             }
             changed = false;
 
-            for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: network.outEdges.entrySet()){
+            for(Map.Entry<String, Map<String, EdgeAttributes>> outerEntry: network.outEdges.entrySet()){
                 from = outerEntry.getKey();
-                for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()){
+                for(Map.Entry<String, EdgeAttributes> innerEntry: outerEntry.getValue().entrySet()){
                     to = innerEntry.getKey();
                     cost = costTo.get(from) + innerEntry.getValue().cost;
                     if (cost < costTo.get(to)){
@@ -161,31 +160,4 @@ public class BellmanFord {
 
         return parents;
     }
-
 }
-
-//
-//probability = probabilityFromSource.get(from);
-//
-//// If flow is left or can be undone, calculate probability (Johnson reweighting)
-//// Check if previous flow to current node can be undone
-//                    if (edges.get(to).get(from).flow != 0){
-//cost = costFromSource.get(from) - edges.get(to).get(from).cost + potentials.get(from) - potentials.get(to);
-//probability = probabilityFromSource.get(from) - Math.log(1-network.getNode(from).risk);
-//canFlow = true;
-//        }
-//
-//        // Check if can flow over original edge
-//        else if (ew.flow < ew.capacity){
-//cost = costFromSource.get(from) + ew.cost + potentials.get(from) - potentials.get(to);
-//probability = probability + Math.log(1-network.getNode(to).risk);
-//canFlow = true;
-//        }
-//
-//        if (canFlow) {
-//        if (cost < costFromSource.get(to)) {
-//changed = true;
-//        costFromSource.put(to, cost);
-//                            parents.put(to, from);
-//                        }
-//                                }

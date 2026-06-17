@@ -7,7 +7,7 @@ import java.util.*;
 public class Network {
     public HashMap<String, Node> nodes = new HashMap<>();
     
-    public Map<String, Map<String, EdgeWeights>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
+    public Map<String, Map<String, EdgeAttributes>> outEdges = new HashMap<>(); // Adjacency map: outgoing edges per node
     public double maxCost = 0.0;
 
     public void addNodeIfAbsent(String id, double probability, NodeType type) {
@@ -37,7 +37,7 @@ public class Network {
     }
 
     public void insertEdge(String fromId, String toId, int capacity, double cost){
-        outEdges.get(fromId).put(toId, new EdgeWeights(capacity, cost));
+        outEdges.get(fromId).put(toId, new EdgeAttributes(capacity, cost));
         if (cost > maxCost){
             maxCost = cost;
         }
@@ -46,7 +46,7 @@ public class Network {
     public void printGraph(){
         for (String nodeId : nodes.keySet()) {
             System.out.println(nodeId);
-            for (Map.Entry<String, EdgeWeights> entry: outEdges.get(nodeId).entrySet()){
+            for (Map.Entry<String, EdgeAttributes> entry: outEdges.get(nodeId).entrySet()){
                 System.out.println("-> " + entry.getKey() + ": " + entry.getValue().toString());
             }
         }
@@ -114,9 +114,9 @@ public class Network {
         String to;
         int capacity;
 
-        for (Map.Entry<String, Map<String, EdgeWeights>> outer : outEdges.entrySet()){
+        for (Map.Entry<String, Map<String, EdgeAttributes>> outer : outEdges.entrySet()){
             from = outer.getKey();
-            for (Map.Entry<String, EdgeWeights> inner: outer.getValue().entrySet()){
+            for (Map.Entry<String, EdgeAttributes> inner: outer.getValue().entrySet()){
                 to = inner.getKey();
                 capacity = inner.getValue().capacity;
                 residual.get(from).put(to, capacity);
@@ -129,8 +129,8 @@ public class Network {
         return residual;
     }
 
-    public Map<String, Map<String, EdgeWeights>> generateResidualMap(){
-        Map<String, Map<String, EdgeWeights>> residual = new HashMap<>();
+    public Map<String, Map<String, EdgeAttributes>> generateResidualMap(){
+        Map<String, Map<String, EdgeAttributes>> residual = new HashMap<>();
 
         for (String from: nodes.keySet()) {
             residual.put(from, new HashMap<>());
@@ -138,17 +138,17 @@ public class Network {
 
         String from;
         String to;
-        EdgeWeights ew;
-        for (Map.Entry<String, Map<String, EdgeWeights>> outer : outEdges.entrySet()){
+        EdgeAttributes ew;
+        for (Map.Entry<String, Map<String, EdgeAttributes>> outer : outEdges.entrySet()){
                 from = outer.getKey();
-                for (Map.Entry<String, EdgeWeights> inner: outer.getValue().entrySet()){
+                for (Map.Entry<String, EdgeAttributes> inner: outer.getValue().entrySet()){
                     to = inner.getKey();
                     ew = inner.getValue();
-                    residual.get(from).put(to, new EdgeWeights(ew.capacity, ew.cost));
+                    residual.get(from).put(to, new EdgeAttributes(ew.capacity, ew.cost));
                     // Add reversed edge if no antiparallel edge exists
                     if (!outEdges.get(to).containsKey(from)){
                         // Depends cost can also be -ew.cost, depends on usage
-                        residual.get(to).put(from, new EdgeWeights(0, 0.0));
+                        residual.get(to).put(from, new EdgeAttributes(0, 0.0));
                     }
                 }
         }
@@ -165,20 +165,20 @@ public class Network {
     }
 
 
-    public Map<String, Map<String, EdgeWeights>> generateCopyMap(){
-        Map<String, Map<String, EdgeWeights>> rNetwork = new HashMap<>();
+    public Map<String, Map<String, EdgeAttributes>> generateCopyMap(){
+        Map<String, Map<String, EdgeAttributes>> rNetwork = new HashMap<>();
 
         String from;
         String to;
-        EdgeWeights ew;
+        EdgeAttributes ew;
 
-        for(Map.Entry<String, Map<String, EdgeWeights>> outerEntry: outEdges.entrySet()){
+        for(Map.Entry<String, Map<String, EdgeAttributes>> outerEntry: outEdges.entrySet()){
             from = outerEntry.getKey();
             rNetwork.put(from, new HashMap<>());
-            for(Map.Entry<String, EdgeWeights> innerEntry: outerEntry.getValue().entrySet()) {
+            for(Map.Entry<String, EdgeAttributes> innerEntry: outerEntry.getValue().entrySet()) {
                 to = innerEntry.getKey();
                 ew = innerEntry.getValue();
-                rNetwork.get(from).put(to, new EdgeWeights(ew.capacity, ew.cost));
+                rNetwork.get(from).put(to, new EdgeAttributes(ew.capacity, ew.cost));
             }
         }
 
@@ -195,7 +195,7 @@ public class Network {
         return nodes.values();
     }
 
-    public Map<String, EdgeWeights> getEdges(String nodeId){
+    public Map<String, EdgeAttributes> getEdges(String nodeId){
         return outEdges.get(nodeId);
     }
 

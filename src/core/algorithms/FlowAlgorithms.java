@@ -56,7 +56,7 @@ public class FlowAlgorithms {
         int totalFlow = 0;
         double totalCost = 0.0;
         double totalProbability = 0.0;
-        double estimateOfReceival = 0;
+        double estimateOfReceival = 0.0;
 
         FlowCostProb updates;
 
@@ -107,7 +107,7 @@ public class FlowAlgorithms {
                 edgeAttrs.flow -= currentFlow;
 
                 // Can use multiplication and division as it's a single path
-                currentProbability /= (1 - network.getNode(child).risk) * (1 - network.getNode(parent).risk);
+                currentProbability /= (1.0 - network.getNode(child).risk) * (1.0 - network.getNode(parent).risk);
             }
 
             // If original edge

@@ -16,6 +16,9 @@ public class Main{
 
         // Graphs with fully known result:
         files.add("1s3n1t-full.csv");
+        files.add("1s4n1t-full-1.csv");
+        files.add("1s4n1t-full-2.csv");
+        files.add("1s4n1t-full-twopath.csv");
 
         // Graphs with partial known result
         files.add("1s3n1t-cf.csv");

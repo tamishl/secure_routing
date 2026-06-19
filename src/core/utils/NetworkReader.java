@@ -29,8 +29,8 @@ public class NetworkReader {
         this.minCost = builder.minCost;
         this.maxCost = builder.maxCost;
         this.riskDecimals = builder.riskDecimals;
-        this.minProbability = builder.minProbability;
-        this.maxProbability = builder.maxProbability;
+        this.minProbability = builder.minRisk;
+        this.maxProbability = builder.maxRisk;
     }
 
 
@@ -166,8 +166,8 @@ public class NetworkReader {
         private double maxCost = 3.0;
 
         private int riskDecimals = 2;
-        private double minProbability = 0.01;
-        private double maxProbability = 0.99;
+        private double minRisk = 0.01;
+        private double maxRisk = 0.99;
 
 
         public Builder(RandomNumberGenerator randNumGenerator){
@@ -213,12 +213,12 @@ public class NetworkReader {
         }
 
         public Builder minProbability(double value) {
-            this.minProbability = value;
+            this.minRisk = value;
             return this;
         }
 
         public Builder maxProbability(double value){
-            this.maxProbability = value;
+            this.maxRisk = value;
             return this;
         }
     }

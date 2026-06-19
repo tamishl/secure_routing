@@ -41,22 +41,21 @@ public class BellmanFord {
                     // Only loop if flow is possible
                     if (edgeAttrs.flow < edgeAttrs.capacity || edges.get(to).get(from).flow != 0){
                         changed = true;
-                        for (CostProbLabel cp: paretoPaths.get(from)){
-                            // If flow is left or can be undone, calculate probability (Johnson reweighting)
-                            // Check if previous flow to current node can be undone
-                            probability = cp.probability;
+                        for (CostProbLabel label : paretoPaths.get(from)){
+                            probability = label.probability;
 
+                            // Check if previous flow to current node can be cancelled
                             if (edges.get(to).get(from).flow != 0){
-                                cost = cp.cost - edges.get(to).get(from).cost + potentials.get(from) - potentials.get(to);
+                                cost = label.cost - edges.get(to).get(from).cost + potentials.get(from) - potentials.get(to);
                                 probability -= Math.log(1-network.getNode(from).risk);
                             }
 
                             // Check if can flow over original edge
                             else if (edgeAttrs.flow < edgeAttrs.capacity){
-                                cost = cp.cost + edgeAttrs.cost + potentials.get(from) - potentials.get(to);
+                                cost = label.cost + edgeAttrs.cost + potentials.get(from) - potentials.get(to);
                                 probability += Math.log(1-network.getNode(to).risk);
                             }
-                            updateParetoPaths(paretoPaths.get(to), cp.path, to, cost, probability);
+                            updateParetoPaths(paretoPaths.get(to), label.path, to, cost, probability);
                         }
                     }
                 }
@@ -76,35 +75,35 @@ public class BellmanFord {
             isPareto = false;
             HashSet<CostProbLabel> dominated = new HashSet<>();
 
-            for (CostProbLabel cp : nodePaths) {
+            for (CostProbLabel label : nodePaths) {
                 // Path is dominated by already existing path: at least one objective is worse and none is better
-                if ((cost > cp.cost || probability < cp.probability) && (cost >= cp.cost && probability <= cp.probability)) {
+                if ((cost > label.cost || probability < label.probability) && (cost >= label.cost && probability <= label.probability)) {
                         isPareto = false;
                         break;
                 }
 
                 // Same values as other path
                 // Can end loop because if a path with the same values is added, it is not dominated
-                else if (cost == cp.cost && probability == cp.probability) {
+                else if (cost == label.cost && probability == label.probability) {
                     // Don't add if it's the same path
-                    isPareto = !path.equals(cp.path);
+                    isPareto = !path.equals(label.path);
                     break;
                 }
 
                 // At least one objective is better
-                else if (cost < cp.cost || probability > cp.probability) {
+                else if (cost < label.cost || probability > label.probability) {
                     isPareto = true;
 
                     // No objective is worse
-                    if (cost <= cp.cost && probability >= cp.probability) {
-                        dominated.add(cp);
+                    if (cost <= label.cost && probability >= label.probability) {
+                        dominated.add(label);
                     }
                 }
             }
 
-            // Remove dominated paths
-            for (CostProbLabel cp: dominated){
-                nodePaths.remove(cp);
+            // Remove dominated labels
+            for (CostProbLabel label: dominated){
+                nodePaths.remove(label);
             }
         }
 

@@ -1,7 +1,7 @@
 import core.Network;
 import core.NodeType;
 import core.algorithms.*;
-import core.models.FlowCostProb;
+import core.models.FlowEstCostProb;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,36 +69,58 @@ public class FlowAlgorithmsTest {
     @Test
     public void minCostMaxFlowCorrect1(){
         Network network = networkReader.getNetwork("1s3n1t-cf.csv");
-        FlowCostProb expected = flowAlgorithms.minCostMaxFlow(network,S, T);
-        assertEquals(70, expected.flow);
-        assertEquals(136.0, expected.cost);
+        FlowEstCostProb result = flowAlgorithms.minCostMaxFlow(network,S, T);
+        assertEquals(70, result.flow);
+        assertEquals(136.0, result.cost);
     }
 
     @Test
     public void minCostMaxFlowCorrect2(){
         Network network = networkReader.getNetwork("1s4n1t-cf-1.csv");
-        FlowCostProb expected = flowAlgorithms.minCostMaxFlow(network,S, T);
-        assertEquals(17, expected.flow);
-        assertEquals(101.0, expected.cost);
+        FlowEstCostProb result = flowAlgorithms.minCostMaxFlow(network,S, T);
+        assertEquals(17, result.flow);
+        assertEquals(101.0, result.cost);
     }
 
     @Test
     public void minCostMaxFlowCorrect3(){
         Network network = networkReader.getNetwork("1s4n1t-cf-2.csv");
-        FlowCostProb expected = flowAlgorithms.minCostMaxFlow(network,S, T);
+        FlowEstCostProb result = flowAlgorithms.minCostMaxFlow(network,S, T);
 
-        assertEquals(17, expected.flow);
-        assertEquals(95.0, expected.cost);
+        assertEquals(17, result.flow);
+        assertEquals(95.0, result.cost);
     }
 
     // https://www.desmos.com/scientific?lang=en
     @Test
     public void maxProbMaxFlowCorrect(){
         Network network = networkReader.getNetwork("1s3n1t-full.csv");
-        FlowCostProb expected = flowAlgorithms.maxProbMaxFlow(network,S, T);
+        FlowEstCostProb result = flowAlgorithms.maxProbMaxFlow(network,S, T);
 
-        assertEquals(150, expected.flow);
-        assertEquals(170, expected.cost);
-        assertTrue(Math.abs(-256.0339378- expected.probability)< 1e-7);
+        assertEquals(150, result.flow);
+        assertEquals(170, result.cost);
+        assertEquals(-256.0339378, result.probability, 1e-7);
+    }
+
+    @Test
+    public void minCostMaxFlowProbMaxFlowCorrectRev(){
+        Network network = networkReader.getNetwork("1s4n1t-full-twopath.csv");
+        FlowEstCostProb result = flowAlgorithms.minCostMaxFlow(network,S, T);
+
+        assertEquals(160, result.flow);
+        assertEquals(51.84, result.estimateOfReceival, 1e-3);
+        assertEquals(920, result.cost);
+        assertTrue(Math.abs(-194.2701531- result.probability)< 1e-7);
+    }
+
+    @Test
+    public void MaxProbMaxFlowProbMaxFlowCorrect(){
+        Network network = networkReader.getNetwork("1s4n1t-full-twopath.csv");
+        FlowEstCostProb result = flowAlgorithms.maxProbMaxFlow(network,S, T);
+
+        assertEquals(160, result.flow);
+        assertEquals(51.84, result.estimateOfReceival, 1e-3);
+        assertEquals(920, result.cost);
+        assertTrue(Math.abs(-194.2701531- result.probability) < 1e-7);
     }
 }

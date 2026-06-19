@@ -4,6 +4,7 @@ import core.Network;
 import core.NodeType;
 import core.models.FlowCost;
 import core.models.FlowCostProb;
+import core.models.FlowEstCostProb;
 import core.utils.NetworkReader;
 import core.utils.RandomNumberGenerator;
 
@@ -21,7 +22,7 @@ public class Analyzer {
 
         FlowCost resultFC;
         FlowCostProb resultFCP;
-
+        FlowEstCostProb resultFECP;
 
         System.out.println("MAXIMUM FLOW AND COST: maxFlow()");
         System.out.println("Paths:");
@@ -40,17 +41,19 @@ public class Analyzer {
         System.out.println();
         System.out.println("MINIMUM COST AND MAXIMUM FLOW: minCostMaxFlow()");
         System.out.println("Paths:");
-        resultFCP = flowAlgorithms.minCostMaxFlow(network, S, T);
-        System.out.println("Flow: " + resultFCP.flow);
-        System.out.println("Cost: " + resultFCP.cost);
-        System.out.println("Probability: " + resultFCP.probability);
+        resultFECP = flowAlgorithms.minCostMaxFlow(network, S, T);
+        System.out.println("Flow: " + resultFECP.flow);
+        System.out.println("Cost: " + resultFECP.cost);
+        System.out.println("Probability: " + resultFECP.probability);
+        System.out.println("Estimate of successfully received flow: " + resultFECP.estimateOfReceival);
 
         System.out.println();
         System.out.println("MAXIMUM PROBABILITY AND FLOW: maxProbMaxFlow()");
         System.out.println("Paths:");
-        resultFCP = flowAlgorithms.maxProbMaxFlow(network, S, T);
-        System.out.println("Flow: " + resultFCP.flow);
-        System.out.println("Cost: " + resultFCP.cost);
-        System.out.println("Probability: " + resultFCP.probability);
+        resultFECP = flowAlgorithms.maxProbMaxFlow(network, S, T);
+        System.out.println("Flow: " + resultFECP.flow);
+        System.out.println("Cost: " + resultFECP.cost);
+        System.out.println("Probability: " + resultFECP.probability);
+        System.out.println("Estimate of successfully received flow: " + resultFECP.estimateOfReceival);
     }
 }

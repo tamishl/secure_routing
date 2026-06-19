@@ -45,15 +45,18 @@ public class BellmanFord {
                             probability = label.probability;
 
                             // Check if previous flow to current node can be cancelled
+                            // Division and multiplication for risk since it is a single path (no relation yet to other paths)
+                            // NOTE: probably need to add flag in case of consecutive reversed edges
                             if (edges.get(to).get(from).flow != 0){
                                 cost = label.cost - edges.get(to).get(from).cost + potentials.get(from) - potentials.get(to);
-                                probability -= Math.log(1-network.getNode(from).risk);
+                                probability /= 1-network.getNode(from).risk;
+
                             }
 
                             // Check if can flow over original edge
                             else if (edgeAttrs.flow < edgeAttrs.capacity){
                                 cost = label.cost + edgeAttrs.cost + potentials.get(from) - potentials.get(to);
-                                probability += Math.log(1-network.getNode(to).risk);
+                                probability *= 1-network.getNode(to).risk;
                             }
                             updateParetoPaths(paretoPaths.get(to), label.path, to, cost, probability);
                         }

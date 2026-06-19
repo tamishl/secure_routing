@@ -97,7 +97,7 @@ public class Network {
             if (node.equals(source)) {
                 List<String> path = new ArrayList<>();
                 path.add("S");
-                costProbMap.get(source).add(new CostProbLabel(0.0, Math.log(1 - nodes.get(source).risk), path));
+                costProbMap.get(source).add(new CostProbLabel(0.0, 1 - nodes.get(source).risk, path));
             }
         }
         return costProbMap;
